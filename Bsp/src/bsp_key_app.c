@@ -1768,8 +1768,7 @@ void Single_SendAi_Usart_RunCmd(void(*sendaiHandler)(uint8_t seddat))
 
 }
 
-#include <stdio.h>
-#include <string.h>
+
 
 // BCC校验函数
 uint8_t bcc_check(const unsigned char *data, int len) {
