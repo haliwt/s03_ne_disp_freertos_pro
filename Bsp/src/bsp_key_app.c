@@ -474,7 +474,7 @@ void power_key_short_fun(void)
     run_t.display_set_timer_timing=beijing_time ;
   
     run_t.process_run_guarantee_flag=0;
-  
+     Lcd_PowerOn_Fun();
 
 }
 
