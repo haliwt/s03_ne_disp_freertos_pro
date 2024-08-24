@@ -44,7 +44,7 @@ void Display_Temperature_Humidity_Value(void)
 
 /******************************************************************************
 *
-*Function Name:static void Setup_Timer_Times(void)
+*Function Name:
 *Funcion:display setup timer times  //__asm("NOP");//等待1个指令周期，系统主频24M
 *Iinput Ref:NO
 *Return Ref:NO

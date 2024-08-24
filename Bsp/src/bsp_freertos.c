@@ -110,7 +110,7 @@ void freeRTOS_Handler(void)
 static void vTaskRunPro(void *pvParameters)
 {
     BaseType_t xResult;
-	const TickType_t xMaxBlockTime = pdMS_TO_TICKS(30); /* 设置最大等待时间为30ms */
+	const TickType_t xMaxBlockTime = pdMS_TO_TICKS(10); /* 设置最大等待时间为30ms */
 	uint32_t ulValue;
     
     static volatile uint8_t power_on_off_flag,fan_on_off_flag ;
@@ -181,8 +181,15 @@ static void vTaskRunPro(void *pvParameters)
      
         if(power_on_off_flag == 1){
              power_on_off_flag++;
+             if(run_t.gPower_On == power_off){
+                power_key_short_fun();
 
-             power_key_short_fun();
+              }
+              else{
+
+                 run_t.gPower_On = power_off;
+
+              }
 
             }
             else if(key_add_flag ==1 || key_dec_flag ==1 || key_mode_flag == 1){
@@ -222,6 +229,8 @@ static void vTaskRunPro(void *pvParameters)
        disp_numbers_five_eight_and_fan_icon_handler();
 
        disp_time_colon_ion_handler();
+
+       Timing_Handler();
        
        }
        else if(run_t.gPower_On == power_off){
@@ -229,7 +238,7 @@ static void vTaskRunPro(void *pvParameters)
           power_off_handler();
 
        }
-      USART1_Cmd_Error_Handler();
+     // USART1_Cmd_Error_Handler();
 
     }
 

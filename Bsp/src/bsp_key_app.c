@@ -24,12 +24,13 @@ void (*sendAi_usart_fun)(uint8_t senddat);
 void (*beijing_time_fun)(void);
 
 static void Receive_Wifi_Cmd(uint8_t cmd);
+static void Setup_Timer_Times(void);
 
 
-static void Timing_Handler(void);
+//static void Timing_Handler(void);
 //static void Power_Off_Fun(void);
 static void Power_On_Fun(void);
-static void Setup_Timer_Times(void);
+
 static void Works_Counter_Time(void);
 void Setup_Timer_Times_Donot_Display(void);
 static void Beijing_Time_Display(void);
@@ -816,7 +817,7 @@ static void Power_On_Fun(void)
 	*
 	*
 ************************************************************************/  
-static void Timing_Handler(void)
+void Timing_Handler(void)
 {
      switch(run_t.display_set_timer_timing ){
          
@@ -894,7 +895,7 @@ void Beijing_Time_Display_Handler(void(*beijing_time_handler)(void))
 	*
 	*
 *************************************************************************/
-static void Setup_Timer_Times(void)
+void Setup_Timer_Times(void)
 {
 
 
