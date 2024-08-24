@@ -217,9 +217,9 @@ static void vTaskRunPro(void *pvParameters)
 
       
         
-       
+       disp_temp_humidity_wifi_icon_handler();
       
-     
+       disp_numbers_five_eight_and_fan_icon_handler();
        
        }
        else if(run_t.gPower_On == power_off){
