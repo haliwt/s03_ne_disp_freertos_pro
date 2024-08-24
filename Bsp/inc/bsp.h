@@ -3,6 +3,7 @@
 #include "main.h"
 
 #include "bsp_cmd_link.h"
+#include "bsp_delay.h"
 #include "bsp_ctl.h"
 #include "bsp_display.h"
 #include "bsp_led.h"
