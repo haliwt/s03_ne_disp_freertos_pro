@@ -30,6 +30,8 @@ void Panel_Led_OnOff_RunCmd(void (*panelledHandler)(void));
 
 void Panel_Led_OnOff_Function(void);
 
+void lcd_power_off_donot_fan_Fun(void);
+
 //void IWDG_Init(uint8_t prer,uint16_t rlr);
 //void IWDG_Feed(void);
 

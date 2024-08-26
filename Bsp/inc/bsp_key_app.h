@@ -96,7 +96,7 @@ void Single_SendAi_Usart_RunCmd(void(*sendaiHandler)(uint8_t seddat));
 
 
 
-
+uint8_t bcc_check(const unsigned char *data, int len) ;
 
 
 void receive_data_fromm_mainboard(uint8_t *pdata,uint8_t len);

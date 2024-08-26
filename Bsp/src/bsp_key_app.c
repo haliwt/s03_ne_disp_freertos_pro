@@ -35,7 +35,7 @@ static void Works_Counter_Time(void);
 void Setup_Timer_Times_Donot_Display(void);
 static void Beijing_Time_Display(void);
 
-uint8_t bcc_check(const unsigned char *data, int len) ;
+
 
 
 /************************************************************************
@@ -395,12 +395,13 @@ void Process_Key_Handler(uint8_t keylabel)
 void power_off_handler(void)
 {
     
-               
+    if(run_t.power_off_id_flag == 1){   
+		run_t.power_off_id_flag++;     
     Power_Off_Fun();
       if(run_t.wifi_send_buzzer_sound != WIFI_POWER_OFF_ITEM){
 
         SendData_PowerOnOff(0);
-		HAL_Delay(1);
+		
        
     }
     if(power_off!=0){
@@ -449,21 +450,39 @@ void power_off_handler(void)
 		
 		run_t.fan_off_60s =0;
   
+	}
+	lcd_power_off_donot_fan_Fun();
+     Breath_Led();
+	if(run_t.gFan_RunContinue == 1){
+           if(run_t.fan_off_60s < 61){
+		      LED_MODEL_OFF();
+			  POWER_ON_LED();
+		      LCD_Display_Wind_Icon_Handler();
+           	}
+		   else {
+               
+               
+               run_t.gFan_RunContinue =0;
+			   Lcd_PowerOff_Fun();
 
-
-
+		   }
+	}
 }
 
-
+/************************************************
+ * 
+ *Function Name:
+ *
+ * 
+*************************************************/
 void power_key_short_fun(void)
 {
-   
-
-    if(run_t.wifi_send_buzzer_sound != WIFI_POWER_ON_ITEM){
+   if(run_t.wifi_send_buzzer_sound != WIFI_POWER_ON_ITEM){
     SendData_PowerOnOff(1);
     HAL_Delay(2);
     }
     Power_On_Fun();
+	run_t.power_off_id_flag =1;
     run_t.gPower_On=power_on;
     run_t.gTimer_set_temp_times=0; //conflict with send temperatur value 
     run_t.gTimer_first_power_on_flag=0;
@@ -1038,358 +1057,11 @@ static void Works_Counter_Time(void)
 
 /******************************************************************************
 *
-*Function Name:void RunPocess_Command_Handler(void)
+*Function Name:void receive_data_fromm_mainboard(uint8_t *pdata,uint8_t len)
 *Funcion: handle of tall process 
 *
 *
 ******************************************************************************/
-#if 0
-void RunPocess_Command_Handler(void)
-{
-   //key input run function
-
-   static uint8_t temp1,temp2,key_set_temp_flag, link_wifi_success,power_off;
-   static uint8_t power_on_fisrt_send_temperature_value, works_break_flag;
-
-   switch(run_t.gPower_On){
-
-   case power_on:
-    
-     
-       //run_t.first_power_on_flag=3;
-     
-
-	  if(run_t.gTimer_first_power_on_flag > 0 && run_t.wifi_receive_power_on_flag==0){
-        run_t.gTimer_first_power_on_flag =0;
-	   	
-          
-	        SendData_PowerOnOff(1);
-    		HAL_Delay(2);
-          
-        }
-        Lcd_PowerOn_Fun();
-	    Timing_Handler();
-	  //  DisplayPanel_Ref_Handler();
-
-	//send timer timing value to main board 
-	  if(run_t.first_power_on_flag==5){
-             
-	         Timing_Handler();
-	         DisplayPanel_Ref_Handler();
-            HAL_Delay(2000);
-            run_t.first_power_on_flag++;
-
-      }
-      if(run_t.setup_timer_flag==1){
-		   run_t.setup_timer_flag++;
-           
-	       SendData_Time_Data(run_t.dispTime_hours);
-		  HAL_Delay(5);
-
-
-	  }
-        
-		
-       //Enable digital "1,2" -> blink LED
-       //Enable digital "1,2" -> blink LED
-	   if(run_t.panel_key_setup_timer_flag==1){
-           run_t.panel_key_setup_timer_flag=0;
-		   key_set_temp_flag =1;
-		  run_t.setup_temperature_value=1;
-		   run_t.gTimer_numbers_one_two_blink=0;
-	     	  
-	   }
-
-	   //digital "1,2" ->display is dhtd11 real temperature value
-	   if(run_t.setup_temperature_value ==0 && key_set_temp_flag ==1 ){
-	   	    key_set_temp_flag = 0;
-
-	        temp1 = run_t.gReal_humtemp[1]/10 %10;  // temperature
-            temp2 = run_t.gReal_humtemp[1]%10;
-
-		    lcd_t.number1_low=temp1;
-			lcd_t.number1_high =temp1;
-
-			lcd_t.number2_low = temp2;
-			lcd_t.number2_high = temp2;
-		
-			
-		}
-	   
-	   //set up temparature value 
-	  if(run_t.temperature_set_flag ==1 && run_t.gTimer_temp_delay > 61 && run_t.ptc_warning==0){
-               run_t.gTimer_temp_delay =0;
-		 
-		  
-		  if(run_t.wifi_set_temperature <= run_t.gReal_humtemp[1] || run_t.gReal_humtemp[1] >39){//envirment temperature
-	  
-				run_t.gDry = 0;
-			    SendData_Set_Command(DRY_OFF_NO_BUZZER);
-                 HAL_Delay(5);
-
-            }
-			else if((run_t.wifi_set_temperature -3) > run_t.gReal_humtemp[1] ||  run_t.gReal_humtemp[1] < 37){
-	  
-		         run_t.gDry = 1;
-			     SendData_Set_Command(DRY_ON_NO_BUZZER);
-                     HAL_Delay(1);
-		         }
-				 
-		  }
-        
-	 
-   
-   //receive from mainboard data 
-   //displayPannel set temperature vale to main board value 
-    if(run_t.gTimer_set_temp_times >9){ // set up temperature value [20,40]
-	     run_t.gTimer_set_temp_times=0;
-		 if(run_t.wifi_set_temperature==0)run_t.wifi_set_temperature=20;
-		 if(power_on_fisrt_send_temperature_value ==0){
-		       power_on_fisrt_send_temperature_value++;
-		     run_t.wifi_set_temperature=40;
-
-
-		 }
-		  if(run_t.wifi_set_temperature_value_flag != 1){
-		  	  SendData_Temp_Data(run_t.wifi_set_temperature);
-               HAL_Delay(2);
-			}
-    }
-
-
-     if(run_t.wifi_connect_flag ==1 && link_wifi_success==0 ){
-            link_wifi_success++;
-            SendData_Set_Command(WIFI_CONNECT_SUCCESS);
-
-     }
-
-     if(run_t.wifi_led_fast_blink_flag==1 && run_t.gTimer_wifi_led_blink > 0){
-        run_t.gTimer_wifi_led_blink=0;
-
-        if(run_t.wifi_receive_led_fast_led_flag==0){
-              SendData_Set_Wifi(0x01);
-              HAL_Delay(1);
-        }
-
-
-     }
-     if(run_t.gTimer_first_power_on_counter > 7 && run_t.power_key_interrupt_counter==1){
-        run_t.gTimer_first_power_on_counter=0;
-      
-      if(run_t.power_key_interrupt_counter==1)run_t.power_key_interrupt_counter++;
-
-     }
-
-     break;
-
-	 case power_off:
-         run_t.step_run_power_on_tag=0;
-	     run_t.step_run_power_on_tag =0;
-         run_t.wifi_receive_power_on_flag=0;
-
-	    if(run_t.wifi_receive_power_off_flag==0 && run_t.gTimer_first_power_off_flag >0 && run_t.first_power_on_flag!=2){
-            run_t.gTimer_first_power_off_flag=0;
-  
-            SendData_PowerOnOff(0);
-    		HAL_Delay(2);
-
-         }
-
-   	     Breath_Led();
-         beijing_time_fun();
-         if(run_t.gFan_RunContinue == 1){
-           if(run_t.fan_off_60s < 61){
-		      LED_MODEL_OFF();
-			  POWER_ON_LED();
-		      LCD_Display_Wind_Icon_Handler();
-           	}
-		   else {
-               
-               
-               run_t.gFan_RunContinue =0;
-			   Lcd_PowerOff_Fun();
-
-		   }
-
-         }
-        
-    break;
-   	}
-}
-
-#endif 
-/**********************************************************************************************************
-**
-*Function Name:static void notifyStatusToHost(uint8_t lightNum,uint8_t filterNum,uint8_t unionNum)
-*Function : 
-*Input Ref:lightNum--LED ,filterNum -filter number, unionNum - smart menu number
-*Return Ref:NO
-*
-*********************************************************************************************************/
-
-/**********************************************************************************************************
-	**
-	*Function Name:void Receive_MainBoard_Data_Handler(uint8_t cmd)
-	*Function : mainboard of command 
-	*Input Ref:
-	*Return Ref:NO
-	*
-*********************************************************************************************************/
-#if 0
-void Receive_MainBoard_Data_Handler(uint8_t cmd)
-{
-    static uint8_t temperature_decade, temperature_unit;
-	static uint8_t hum1,hum2,temp1,temp2; 
-	
-    switch(cmd){
-
-
-	 case WIFI_CMD://5
-	 	 run_t.step_run_power_on_tag =1;
-	 	 Receive_Wifi_Cmd(run_t.wifiCmd[0]);
-	 break;
-
-	 
-	 case WIFI_REAL_TEMP: //4//set temperature value
-	       if(run_t.gPower_On ==1){
-		   	   
-
-
-		      temperature_decade= run_t.wifi_set_temperature /10 ;
-			  temperature_unit = run_t.wifi_set_temperature %10;
-		   
-	         lcd_t.number1_high = temperature_decade;
-			 lcd_t.number1_low = temperature_decade;
-
-			 
-		    lcd_t.number2_high =  temperature_unit;
-			lcd_t.number2_low = temperature_unit;
-
-			
-		//	run_t.gTimer_numbers_one_two_blink=0;
-	      }
-
-	 break;
-
-	 case PANEL_DATA://1
-	   
-        if(run_t.gPower_On ==1){
-        hum1 =  run_t.gReal_humtemp[0]/10 ;  //Humidity 
-        hum2 =  run_t.gReal_humtemp[0]%10;
-        
-        temp1 = run_t.gReal_humtemp[1]/10 ;  // temperature
-        temp2 = run_t.gReal_humtemp[1]%10;
-       
-         //temperature 
-		 lcd_t.number1_high = temp1;
-		 lcd_t.number1_low = temp1;
-
-		  lcd_t.number2_high = temp2;
-		 lcd_t.number2_low = temp2;
-
-		 //humidity
-		 
-		 lcd_t.number3_high = hum1;
-		 lcd_t.number3_low = hum1;
-		 
-		 lcd_t.number4_high = hum2;
-		 lcd_t.number4_low = hum2;
-
-		// DisplayPanel_Ref_Handler();
-        }
-
-      break;
-
-       case WIFI_BEIJING_TIME: //7//run_t.wifi_connect_flag
-         if(run_t.gPower_On==1){
-           if(run_t.timer_timing_define_flag==timing_not_definition ){
-			 lcd_t.number5_low=(run_t.dispTime_hours ) /10;
-	         lcd_t.number5_high =(run_t.dispTime_hours) /10;
-        
-			 lcd_t.number6_low = (run_t.dispTime_hours ) %10;
-			 lcd_t.number6_high = (run_t.dispTime_hours ) %10;
-	        
-
-
-			lcd_t.number7_low = (run_t.dispTime_minutes )/10;
-			lcd_t.number7_high = (run_t.dispTime_minutes )/10;
-              HAL_Delay(5);
-			lcd_t.number8_low = (run_t.dispTime_minutes )%10;
-			lcd_t.number8_high = (run_t.dispTime_minutes )%10;
-              HAL_Delay(5);
-	        DisplayPanel_Ref_Handler();
-
-			lcd_t.display_beijing_time_flag = 1;
-	      }
-         }
-		    
-        
- 
-      break;
-
-      case WIFI_SET_TIMING://10
-        
-        if(run_t.dispTime_hours !=0){
-            run_t.timer_timing_define_flag = timing_success ;
-            run_t.Timer_mode_flag = 1;
-            run_t.dispTime_minutes = 0;
-             lcd_t.number5_low=(run_t.dispTime_hours ) /10;
-	         lcd_t.number5_high =(run_t.dispTime_hours) /10;
-              HAL_Delay(1);
-			 lcd_t.number6_low = (run_t.dispTime_hours ) %10;;
-			 lcd_t.number6_high = (run_t.dispTime_hours ) %10;
-	          HAL_Delay(1);
-
-
-			lcd_t.number7_low = run_t.dispTime_minutes ;
-			lcd_t.number7_high = run_t.dispTime_minutes ;
-
-			lcd_t.number8_low = run_t.dispTime_minutes ;
-			lcd_t.number8_high = run_t.dispTime_minutes;
-            
-        }
-
-      break;
-
-	  case WIFI_SET_TEMPERATURE://11
-
-	  		if(run_t.gPower_On ==1){
-
-			run_t.panel_key_setup_timer_flag=1;
-
-		  
-			  run_t.wifi_set_temperature_value_flag =1;
-
-			  run_t.wifi_set_temperature = run_t.wifi_set_oneself_temperature;
-
-		      temperature_decade=  run_t.wifi_set_temperature /10 ;
-			  temperature_unit =  run_t.wifi_set_temperature %10;
-		      // HAL_Delay(5);
-	         lcd_t.number1_high = temperature_decade;
-			 lcd_t.number1_low = temperature_decade;
-
-			 
-		    lcd_t.number2_high =  temperature_unit;
-			lcd_t.number2_low = temperature_unit;
-
-			
-			run_t.gTimer_numbers_one_two_blink=0;
-	      }
-
-
-	  break;
-
-
-
-      default:
-        
-      break;
-
-	}
-
-
-}
-#endif 
 void receive_data_fromm_mainboard(uint8_t *pdata,uint8_t len)
 {
    uint8_t check_code;
@@ -1397,9 +1069,6 @@ void receive_data_fromm_mainboard(uint8_t *pdata,uint8_t len)
   check_code =  bcc_check(pdata, len) ;
 
   if(check_code == pdata[len-1]){
-
-
-
 
   if(pdata[0] == 0x10){
 

@@ -39,6 +39,7 @@ typedef struct __RUN{
    uint8_t gRun_flag;
    uint8_t power_times;
    uint8_t vk36n4d_interrupt_flag;
+   uint8_t power_off_id_flag;
 
    
    uint8_t gTemperature;

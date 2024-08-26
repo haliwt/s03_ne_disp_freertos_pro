@@ -74,7 +74,16 @@ void Lcd_PowerOff_Fun(void)
 
 
 }
+void lcd_power_off_donot_fan_Fun(void)
+{
 
+	POWER_OFF_LED()  ;
+	LED_MODEL_OFF();
+	LCD_BACK_LIGHT_OFF();
+    
+
+
+}
 
 /*******************************************************************************************
  	*
