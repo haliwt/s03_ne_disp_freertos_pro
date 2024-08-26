@@ -28,7 +28,7 @@ void SendData_PowerOnOff(uint8_t index)
 	outputBuf[5]=0xFE; // frame of end code -> 0xFE.
 	
 	outputBuf[6] = bcc_check(outputBuf,6);
-	transferSize=6;
+	transferSize=7;
 	if(transferSize)
 	{
 		while(transOngoingFlag);
