@@ -397,21 +397,14 @@ void power_off_handler(void)
     
     if(run_t.power_off_id_flag == 1){   
 		run_t.power_off_id_flag++;     
-    Power_Off_Fun();
-      if(run_t.wifi_send_buzzer_sound != WIFI_POWER_OFF_ITEM){
-
+    	Power_Off_Fun();
         SendData_PowerOnOff(0);
 		
        
-    }
-    if(power_off!=0){
-        run_t.gFan_RunContinue=1;
-        run_t.gTimer_first_power_on_counter=0;
-
-     }
+   
     run_t.wifi_receive_power_on_flag=0;
     run_t.power_key_interrupt_counter=0;//WT.EDIT 2023.07.25
-	run_t.gPower_On = power_off;
+	
   
 	run_t.temperature_set_flag = 0;
 
@@ -427,13 +420,13 @@ void power_off_handler(void)
 	run_t.timer_timing_define_flag = timing_not_definition;
 
 	run_t.ptc_too_hot_flag = 0;
-	run_t.ptc_warning = 0;
+	;
     run_t.gTimer_first_power_on_flag=0;
     run_t.gTimer_first_power_off_flag=0;
 	
 	run_t.fan_warning=0;
-  
-    run_t.process_run_guarantee_flag=0;
+    run_t.ptc_warning = 0;
+
 
 
        //run_t.gModel =1; //WT.EDIT 2022.09.01
@@ -449,7 +442,7 @@ void power_off_handler(void)
 		run_t.disp_wind_speed_grade =30;	
 		
 		run_t.fan_off_60s =0;
-  
+		run_t.gFan_RunContinue=1;
 	}
 	lcd_power_off_donot_fan_Fun();
      Breath_Led();
@@ -477,17 +470,14 @@ void power_off_handler(void)
 *************************************************/
 void power_key_short_fun(void)
 {
-   if(run_t.wifi_send_buzzer_sound != WIFI_POWER_ON_ITEM){
-    SendData_PowerOnOff(1);
-    HAL_Delay(2);
-    }
+  
+   
+  
     Power_On_Fun();
 	run_t.power_off_id_flag =1;
     run_t.gPower_On=power_on;
     run_t.gTimer_set_temp_times=0; //conflict with send temperatur value 
     run_t.gTimer_first_power_on_flag=0;
-
-
     run_t.gTimer_first_power_off_flag=0;
 
     run_t.gModel =1;
@@ -495,7 +485,7 @@ void power_key_short_fun(void)
   
     run_t.process_run_guarantee_flag=0;
      Lcd_PowerOn_Fun();
-
+     SendData_PowerOnOff(1);
 }
 
 void power_key_long_fun(void)
