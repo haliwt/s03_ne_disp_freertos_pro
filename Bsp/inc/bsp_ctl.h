@@ -109,7 +109,7 @@ typedef struct __RUN{
    uint8_t auto_model_shut_off_ptc_flag;
 
    //iwdg ref
-   uint8_t process_run_guarantee_flag;
+
    
 
 
@@ -130,13 +130,7 @@ typedef struct __RUN{
    uint8_t  gmt_time_seconds;
    uint8_t display_set_timer_timing;
 
-
- 
-
-
- 
    
-   uint8_t Timer_mode_flag;
    uint8_t temperature_set_flag;
 
    uint8_t gReal_humtemp[2];

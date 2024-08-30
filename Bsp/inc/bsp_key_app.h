@@ -116,7 +116,7 @@ void power_key_long_fun(void);
 void mode_key_short_fun(void);
 
 
-void mode_key_long_fun(void);
+
 
 
 void add_key_fun(void);

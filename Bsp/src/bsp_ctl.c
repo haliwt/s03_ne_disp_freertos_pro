@@ -212,7 +212,7 @@ void Receive_Wifi_Cmd(uint8_t cmd)
 				run_t.gModel =1;
 				run_t.display_set_timer_timing=beijing_time ;
 	
-                run_t.process_run_guarantee_flag=1;
+   
 			  cmd=0xff;
 
 	         break;
@@ -223,7 +223,7 @@ void Receive_Wifi_Cmd(uint8_t cmd)
 			   run_t.wifi_send_buzzer_sound = WIFI_POWER_OFF_ITEM;
 				
 
-               run_t.process_run_guarantee_flag=1;
+      
 				
               cmd=0xff;
 
@@ -369,7 +369,7 @@ void Receive_Wifi_Cmd(uint8_t cmd)
 ************************************************************************/  
 void Timing_Handler(void)
 {
-     switch(run_t.display_set_timer_timing ){
+     switch(run_t.display_set_timer_timing ){//run_t.setup_timer_timing_item
          
      case beijing_time:
        beijing_time_fun();

@@ -76,7 +76,7 @@ void power_off_handler(void)
 	run_t.wifi_set_temperature_value_flag=0;
  
     run_t.wifi_led_fast_blink_flag=0;
-    run_t.Timer_mode_flag = 0;
+   
 	run_t.works_counter_time_value=0;
 	run_t.panel_key_setup_timer_flag=0;
     run_t.setup_temperature_value=0;
@@ -142,14 +142,13 @@ void power_key_short_fun(void)
     Power_On_Fun();
 	run_t.power_off_id_flag =1;
     run_t.gPower_On=power_on;
-   
- 
+    run_t.setup_timer_timing_item=0;
    
 
     run_t.gModel =1;
     run_t.display_set_timer_timing=beijing_time ;
   
-    run_t.process_run_guarantee_flag=0;
+  
      Lcd_PowerOn_Fun();
      SendData_PowerOnOff(1);
 }
@@ -164,7 +163,7 @@ void power_key_long_fun(void)
   
     run_t.wifi_receive_led_fast_led_flag=0; //adjust if mainboard receive of connect wifi of signal
     run_t.wifi_led_fast_blink_flag=1;
-    run_t.process_run_guarantee_flag=0;
+  
    
     HAL_Delay(2);
 
@@ -200,117 +199,89 @@ void mode_key_short_fun(void)
 
 }
 
-void mode_key_long_fun(void)
-{
-   
-		   if(run_t.ptc_warning ==0){
-
-           run_t.gModel=2;
-		   run_t.setup_timer_timing_item=1;//run_t.gModel =2;
-		   run_t.display_set_timer_timing  =timer_time;
-		   run_t.gTimer_key_timing=0;
-		
-
-		   run_t.Timer_mode_flag=1;
-		   
-		   
-		  
-
-          }
-
-}
 
 void add_key_fun(void)
 {
      static uint8_t power_on_fisrt_flag ;
      static uint8_t temp_bit_1_hours,temp_bit_2_hours,temp_bit_1_minute,temp_bit_2_minute;
-     if(run_t.gPower_On ==1){
-
-		    if(run_t.ptc_warning ==0){
+    
 		
-			 SendData_Buzzer();
-             //HAL_Delay(30);
-             osDelay(5);
+	 SendData_Buzzer();
+     osDelay(5);
+
+
+    switch(run_t.setup_timer_timing_item){
+
+	case 0: //set temperature value add number
+
+		run_t.wifi_set_temperature_value_flag =0;
+		run_t.wifi_set_temperature ++;
+        if(run_t.wifi_set_temperature < 20){
+		    run_t.wifi_set_temperature=20;
+		}
 		
+		if(run_t.wifi_set_temperature > 40)run_t.wifi_set_temperature= 20;
 
-		    switch(run_t.setup_timer_timing_item){
-
-			case 0: //set temperature value add number
-      
-				run_t.wifi_set_temperature_value_flag =0;
-				run_t.wifi_set_temperature ++;
-	            if(run_t.wifi_set_temperature < 20){
-				    run_t.wifi_set_temperature=20;
-				}
-				
-				if(run_t.wifi_set_temperature > 40)run_t.wifi_set_temperature= 20;
-
-				if(power_on_fisrt_flag ==0){
-				     power_on_fisrt_flag ++;
-			     	run_t.wifi_set_temperature =40;
+		if(power_on_fisrt_flag ==0){
+		     power_on_fisrt_flag ++;
+	     	run_t.wifi_set_temperature =40;
 
 
-			      }
+	      }
+    
+	    decade_temp =  run_t.wifi_set_temperature / 10 ;
+		unit_temp =  run_t.wifi_set_temperature % 10; //
+        
+		lcd_t.number1_low=decade_temp;
+		lcd_t.number1_high =decade_temp;
+
+		lcd_t.number2_low = unit_temp;
+		lcd_t.number2_high = unit_temp;
+
+		run_t.panel_key_setup_timer_flag = 1;
+        
+
+			
+	
+	   break;
+
+	   case 1:
+		  
+			run_t.gTimer_key_timing =0;
+         
+			run_t.timer_time_hours++ ;//run_t.dispTime_minutes = run_t.dispTime_minutes + 60;
+		    if(run_t.timer_time_hours > 24){ //if(run_t.dispTime_minutes > 59){
+
+                 run_t.timer_time_hours=0;//run_t.dispTime_hours =0;
+                
+
+			}
+		
+          
+			temp_bit_2_hours = run_t.timer_time_hours /10 ;
+			temp_bit_1_hours = run_t.timer_time_hours %10;
+           // HAL_Delay(20);
+			run_t.timer_time_minutes  =0;
+
+			temp_bit_2_minute =0;
+			temp_bit_1_minute =0;
             
-			    decade_temp =  run_t.wifi_set_temperature / 10 ;
-				unit_temp =  run_t.wifi_set_temperature % 10; //
-                
-				lcd_t.number1_low=decade_temp;
-				lcd_t.number1_high =decade_temp;
+			lcd_t.number5_low=temp_bit_2_hours;
+			lcd_t.number5_high =temp_bit_2_hours;
 
-				lcd_t.number2_low = unit_temp;
-				lcd_t.number2_high = unit_temp;
+			lcd_t.number6_low = temp_bit_1_hours;
+			lcd_t.number6_high = temp_bit_1_hours;
 
-				run_t.panel_key_setup_timer_flag = 1;
-                
-               run_t.process_run_guarantee_flag=0;
-					
-			
-			   break;
+			lcd_t.number7_low=temp_bit_2_minute;
+			lcd_t.number7_high =temp_bit_2_minute;
 
-			   case 1:
-				  
-					run_t.gTimer_key_timing =0;
-                 
-					run_t.timer_time_hours++ ;//run_t.dispTime_minutes = run_t.dispTime_minutes + 60;
-				    if(run_t.timer_time_hours > 24){ //if(run_t.dispTime_minutes > 59){
-
-		                 run_t.timer_time_hours=0;//run_t.dispTime_hours =0;
-		                
-
-					}
-				
-                  
-					temp_bit_2_hours = run_t.timer_time_hours /10 ;
-					temp_bit_1_hours = run_t.timer_time_hours %10;
-                   // HAL_Delay(20);
-					run_t.timer_time_minutes  =0;
-
-					temp_bit_2_minute =0;
-					temp_bit_1_minute =0;
-                    
-					lcd_t.number5_low=temp_bit_2_hours;
-					lcd_t.number5_high =temp_bit_2_hours;
-
-					lcd_t.number6_low = temp_bit_1_hours;
-					lcd_t.number6_high = temp_bit_1_hours;
-
-					lcd_t.number7_low=temp_bit_2_minute;
-					lcd_t.number7_high =temp_bit_2_minute;
-
-					lcd_t.number8_low = temp_bit_1_minute;
-					lcd_t.number8_high = temp_bit_1_minute;
-
-				run_t.process_run_guarantee_flag=0;
-				break;
-				}	
-			
-		     }
-            }
+			lcd_t.number8_low = temp_bit_1_minute;
+			lcd_t.number8_high = temp_bit_1_minute;
 
 
-
-
+		break;
+		}	
+	
 }
 
 
@@ -349,8 +320,7 @@ void dec_key_fun(void)
 			lcd_t.number2_high = unit_temp;
 			
 			run_t.panel_key_setup_timer_flag = 1;
-	    	
-            run_t.process_run_guarantee_flag=0;
+	
 		    break;
 
 			case 1:
@@ -388,7 +358,7 @@ void dec_key_fun(void)
 
 					lcd_t.number8_low = temp_bit_1_minute;
 					lcd_t.number8_high = temp_bit_1_minute;
-                    run_t.process_run_guarantee_flag=0;
+                 
 
              break;
 
@@ -494,7 +464,7 @@ static void Power_On_Fun(void)
 **********************************************************************************/
 static void Beijing_Time_Display(void)
 {
-		run_t.Timer_mode_flag = 0;
+	
 	    if(run_t.gTimer_disp_timer_seconds >59){ //minute
 
 			run_t.gTimer_disp_timer_seconds=0;

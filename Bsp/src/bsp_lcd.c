@@ -206,13 +206,13 @@ void LCD_Display_Wind_Icon_Handler(void)
 	  TM1723_Write_Display_Data(0xC4,0x0);
 	  TM1723_Write_Display_Data(0xC5,0x0);
 	  TM1723_Write_Display_Data(0xC9,0x0);
-	  if(run_t.Timer_mode_flag ==0)
+	  if(run_t.setup_timer_timing_item ==0)
 	  	TM1723_Write_Display_Data(0xCB,0x0);
 
      //only display wind speed "icon"
       if(run_t.disp_wind_speed_grade <34){
 	      if(lcd_t.gTimer_fan_10ms >79 && lcd_t.gTimer_fan_10ms<160){
-	      	   if(run_t.Timer_mode_flag ==0){
+	      	   if(run_t.setup_timer_timing_item ==0){
 		  	   TM1723_Write_Display_Data(0xCA,(T15+lcdNumber5_Low[lcd_t.number5_low]+lcdNumber6_High[lcd_t.number6_high])&0x01);//"T15"
 	      		TM1723_Write_Display_Data(0xCC,(lcdNumber7_Low[lcd_t.number7_low]+lcdNumber8_High[lcd_t.number8_high])&0x00);//"T14"
 		  	    TM1723_Write_Display_Data(0xCE,(T13+lcdNumber8_Low[lcd_t.number8_low]+0xE0)&0x01); //"T13"
@@ -231,7 +231,7 @@ void LCD_Display_Wind_Icon_Handler(void)
 
 	      }
   		  else if(lcd_t.gTimer_fan_10ms <80){
-  		  	   if(run_t.Timer_mode_flag ==0){
+  		  	   if(run_t.setup_timer_timing_item ==0){
 			  	   TM1723_Write_Display_Data(0xCA,(lcdNumber5_Low[lcd_t.number5_low]+lcdNumber6_High[lcd_t.number6_high])&0x00);//"T15"
 			  	   TM1723_Write_Display_Data(0xCC,(T14+lcdNumber7_Low[lcd_t.number7_low]+lcdNumber8_High[lcd_t.number8_high])&0x01);//"T14"
 			  	   TM1723_Write_Display_Data(0xCE,(lcdNumber8_Low[lcd_t.number8_low]+0xE0)&0x00);//display "T13"

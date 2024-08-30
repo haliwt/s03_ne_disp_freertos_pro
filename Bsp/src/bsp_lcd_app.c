@@ -6,7 +6,7 @@ static void disp_fan_speed_level(void);
 
 static void donot_disp_T13_icon_fan_speed_level(void);
 
-static void disp_fan_leaf_run_icon(void);
+
 
 /*************************************************************************
  	*
@@ -186,17 +186,17 @@ void disp_temp_humidity_wifi_icon_handler(void)
 
 /******************************************************************************
 	*
-	*Function Name:void disp_numbers_five_eight_and_fan_icon_handler(void)
+	*Function Name:void disp_normal_timing_and_fan_icon_handler(void)
 	*Function: display of icon , "1" -> ON ,"0"-> OFF
 	*Input Ref:NO
 	*Return Ref:NO
 	*
 ******************************************************************************/
-void disp_numbers_five_eight_and_fan_icon_handler(void)
+void disp_normal_timing_and_fan_icon_handler(void)
 {
   static uint8_t  timer_timg_flag;
   //Humidity Icon "0xC9"-numbers "4-4B,4G,4C","5-5A,5F,5E,5D"
-     if(run_t.Timer_mode_flag == 1 && run_t.gPower_On == 1 && run_t.setup_timer_timing_item==timer_time && run_t.ptc_too_hot_flag ==0){ //digital -> 5,6,7,8 blink .
+     if(run_t.setup_timer_timing_item == 1 && run_t.gPower_On == power_on  && run_t.ptc_too_hot_flag ==0){ //digital -> 5,6,7,8 blink .
 
      	 if(run_t.gTimer_digital5678_ms < 3){
              TM1723_Write_Display_Data(0xC9,(0x01+lcdNumber4_Low[lcd_t.number4_low]+lcdNumber5_High[lcd_t.number5_high]) & 0xff);//display digital '4,5'
@@ -237,7 +237,7 @@ void disp_numbers_five_eight_and_fan_icon_handler(void)
 
 		  if(run_t.gTimer_key_timing > 3){ //4
 
-		         run_t.Timer_mode_flag = 0;
+		       run_t.setup_timer_timing_item=0;
 				run_t.timer_time_minutes = 0;
 				
 				run_t.gTimer_timing=0;
@@ -342,7 +342,7 @@ void disp_time_colon_ion_handler(void)
    /*********************END T15***********************/
      //address"0xCB" ->numbers .T9":","6->6B,6G,6C","7->7A,7F,7E,7D"
      if(lcd_t.gTimer_colon_ms < 6){
-     	 if(run_t.Timer_mode_flag == 0){
+     	 if(run_t.setup_timer_timing_item== 0){
 		 	if(run_t.ptc_too_hot_flag ==0){
 	   			TM1723_Write_Display_Data(0xCB,0x01+lcdNumber6_Low[lcd_t.number6_low]+lcdNumber7_High[lcd_t.number7_high]);//display "6,7"
 			}
@@ -365,7 +365,7 @@ void disp_time_colon_ion_handler(void)
 		}
      }
      else if(lcd_t.gTimer_colon_ms > 5 && lcd_t.gTimer_colon_ms < 11){
-     	 if(run_t.Timer_mode_flag == 0){
+     	 if(run_t.setup_timer_timing_item == 0){
 		 	if(run_t.ptc_too_hot_flag ==0){
 	 			TM1723_Write_Display_Data(0xCB,lcdNumber6_Low[lcd_t.number6_low]+lcdNumber7_High[lcd_t.number7_high]);//display "6,7"
 		 	}
@@ -392,7 +392,7 @@ void disp_time_colon_ion_handler(void)
 }
 
 
-static void disp_fan_speed_level(void)
+void disp_fan_speed_level(void)
 {
 
       if(run_t.disp_wind_speed_grade >66){
@@ -408,7 +408,14 @@ static void disp_fan_speed_level(void)
 
 }
 
-
+/*************************************************************************************
+    *
+    *Function Name:static void donot_disp_T13_icon_fan_speed_level(void)
+    *Function:
+    *
+    *
+    *
+**************************************************************************************/
 static void donot_disp_T13_icon_fan_speed_level(void)
 {
     if(run_t.disp_wind_speed_grade >66){
@@ -427,12 +434,19 @@ static void donot_disp_T13_icon_fan_speed_level(void)
 
 }
 
-
+/*************************************************************************************
+    *
+    *Function Name:static void donot_disp_T13_icon_fan_speed_level(void)
+    *Function:
+    *
+    *
+    *
+**************************************************************************************/
 static void disp_fan_leaf_run_icon(void)
 {
 
   if(lcd_t.gTimer_fan_10ms >39 && lcd_t.gTimer_fan_10ms<80){
-			 if(run_t.Timer_mode_flag == 0){
+			 if(run_t.setup_timer_timing_item == 0){
 
                 
 			 	if(run_t.ptc_too_hot_flag ==0){
@@ -480,7 +494,7 @@ static void disp_fan_leaf_run_icon(void)
 			 }
 		 }
 		 else if(lcd_t.gTimer_fan_10ms <40){
-		 	 if(run_t.Timer_mode_flag == 0){
+		 	 if(run_t.setup_timer_timing_item == 0){
                 
 			 	if(run_t.ptc_too_hot_flag ==0){
                     TM1723_Write_Display_Data(0xCA,lcdNumber5_Low[lcd_t.number5_low]+lcdNumber6_High[lcd_t.number6_high]);//display digit
@@ -529,4 +543,9 @@ static void disp_fan_leaf_run_icon(void)
 
 
 }
+
+
+
+
+
 

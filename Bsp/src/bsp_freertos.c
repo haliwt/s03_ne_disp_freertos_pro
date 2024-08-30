@@ -220,13 +220,10 @@ static void vTaskRunPro(void *pvParameters)
              }
              else if(gl_tMsg.key_long_mode_flag ==1 ){
                  key_mode_flag =0;
-               
-                 //SendData_Set_Command(0x05,0x01); //link wifi net .
                  mode_key_long_fun();
               
 
-
-             }
+            }
             else if(key_add_flag ==1 || key_dec_flag ==1 || key_mode_flag == 1){
                 
 
@@ -254,8 +251,8 @@ static void vTaskRunPro(void *pvParameters)
          }
 
        disp_temp_humidity_wifi_icon_handler();
-      
-       disp_numbers_five_eight_and_fan_icon_handler();
+
+       disp_timer_time_and_fan_icon_handler();
 
        disp_time_colon_ion_handler();
 
