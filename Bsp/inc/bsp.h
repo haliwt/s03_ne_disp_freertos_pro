@@ -38,6 +38,7 @@
 typedef struct _process_state{
 
    uint8_t disp_rx_cmd_done_flag;
+   uint8_t gTimer_mode_key_long;
 
 
 }process_state;

@@ -105,7 +105,7 @@ void disp_temp_humidity_wifi_icon_handler(void)
 				 run_t.setup_temperature_value =0;
 			     run_t.panel_key_setup_timer_flag=0;
 				 run_t.temperature_set_flag = 1;
-				 run_t.gTimer_temp_delay =67;
+				
 				
 				 
 			 }
@@ -164,7 +164,7 @@ void disp_temp_humidity_wifi_icon_handler(void)
 		        lcd_t.gTimer_wifi_500ms =0;
                
 			 }
-             if(run_t.gTimer_wifi_connect_counter > 134){
+             if(run_t.gTimer_wifi_connect_counter > 120){ //
                   run_t.gTimer_wifi_connect_counter=0;
                   run_t.wifi_led_fast_blink_flag=0;
 			      

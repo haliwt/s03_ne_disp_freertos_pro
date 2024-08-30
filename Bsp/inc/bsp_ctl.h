@@ -44,7 +44,7 @@ typedef struct __RUN{
    
    uint8_t gTemperature;
  
-   uint8_t gTimer_minute_Counter;
+   uint8_t gTimer_disp_timer_seconds;
    
   uint8_t gTimer_setup_zero;
 
@@ -58,7 +58,7 @@ typedef struct __RUN{
   uint8_t wifi_link_flag;
   uint8_t first_power_on_flag;
   uint8_t step_run_power_on_tag;
-  uint8_t gTimer_detected_power_key;
+
   uint8_t power_key_detected;
 
  
@@ -102,9 +102,9 @@ typedef struct __RUN{
    uint8_t wifi_receive_led_fast_led_flag;
    uint8_t wifi_receive_power_on_flag;
    uint8_t wifi_receive_power_off_flag;
-   uint8_t gTimer_first_power_on_counter;
-   uint8_t gTimer_first_power_off_flag;
-   
+
+
+  
    //others 
    uint8_t auto_model_shut_off_ptc_flag;
 
@@ -115,7 +115,7 @@ typedef struct __RUN{
 
  
    uint8_t key_read_value;
-   uint8_t gTimer_usart_error;
+
    uint8_t gPower_repeat_times_flag;
    //timer 
    uint8_t setup_timer_flag;
@@ -145,22 +145,22 @@ typedef struct __RUN{
    uint8_t wifiCmd[2];
 
    //gTimer
-   uint8_t gTimer_wifi_led_blink;
+ 
    uint8_t gTimer_wifi_connect_counter;
    uint8_t panel_key_setup_timer_flag;
-   uint8_t gTimer_temp_delay;
-   uint8_t gTimer_set_temp_times;
+ 
+
    uint8_t gTimer_digital5678_ms;
    uint8_t gTimer_key_timing;
    uint8_t gTimer_timing;
-   uint8_t gTimer_connect_wifi ;
-   uint8_t gTimer_ptc_fan_warning;
-   uint8_t gTimer_first_power_on_flag ;
+ 
+
+
    
 
     int8_t dispTime_hours;
 	int8_t dispTime_minutes;
-	int8_t dispTime_seconds;
+	int8_t gTimer_disp_time_sencods;
 
 	int8_t  timer_time_hours;
    int8_t 	timer_time_minutes ;
@@ -170,7 +170,7 @@ typedef struct __RUN{
 	
     int8_t 	gTime_hours;
 
-   
+     uint8_t gTimer_ptc_fan_warning;
 	 uint16_t power_key_interrupt_counter;
 	 uint16_t gTimer_ptc_fan_blink_warning;
      uint16_t gTimer_numbers_one_two_blink;

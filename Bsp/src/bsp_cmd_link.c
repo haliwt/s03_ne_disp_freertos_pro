@@ -78,25 +78,7 @@ void SendData_Set_Command(uint8_t cmd,uint8_t data)
 		}
 	
 }
-void SendData_Set_Wifi(uint8_t hdata)
-{
-	outputBuf[0]=0xA5; //display board head = 0xA5
-	outputBuf[1]= 0x01; //display device Number:is 0x01
-	outputBuf[2]=0x05; // command type = 0x05 ->link net wifi or not 
-	outputBuf[3]=0x01; // command order -> 01 - buzzer sound done, 00- don't buzzer sound 
-	outputBuf[4]=0x00; // data is length: 00 ->don't data 
-	outputBuf[5]=0xFE; // frame of end code -> 0xFE.
-    outputBuf[6] = bcc_check(outputBuf,6);
-		
-		transferSize=7;
-		if(transferSize)
-		{
-			while(transOngoingFlag);
-			transOngoingFlag=1;
-			HAL_UART_Transmit_IT(&huart1,outputBuf,transferSize);
-		}
-	
-}
+
 /*********************************************************
  * 
  * Function Name:void SendData_Temp_Data(uint8_t tdata)

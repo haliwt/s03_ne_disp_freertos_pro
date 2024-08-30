@@ -157,7 +157,7 @@ void receive_data_fromm_mainboard(uint8_t *pdata)
 
             run_t.dispTime_hours  =  pdata[5];
             run_t.dispTime_minutes = pdata[6];
-            run_t.dispTime_seconds =  pdata[7];
+            run_t.gTimer_disp_time_sencods =  pdata[7];
 
 
         }
@@ -327,7 +327,7 @@ void Receive_Wifi_Cmd(uint8_t cmd)
 
 
 			 case PTC_ERROR:
-			 	 run_t.gTimer_ptc_fan_warning=0;
+			 	
 			 	  run_t.gDry=0;
 				  run_t.ptc_too_hot_flag =1;
 			      run_t.ptc_warning =1;
@@ -335,7 +335,7 @@ void Receive_Wifi_Cmd(uint8_t cmd)
 			 break;
 
 			 case FAN_ERROR:
-			 	 run_t.gTimer_ptc_fan_warning=31;
+			 	
 			 	 run_t.ptc_too_hot_flag =1;
 			 	 run_t.disp_wind_speed_grade=0;
 	
@@ -515,9 +515,9 @@ void Setup_Timer_Times_Donot_Display(void)
 static void Works_Counter_Time(void)
 {
   if(run_t.timer_timing_define_flag == timing_success){
-	  if(run_t.gTimer_minute_Counter >59){ //minute
+	  if(run_t.gTimer_disp_timer_seconds >59){ //minute
 		
-		run_t.gTimer_minute_Counter=0;
+		run_t.gTimer_disp_timer_seconds=0;
         run_t.dispTime_minutes ++;
        
           

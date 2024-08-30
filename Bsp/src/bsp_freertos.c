@@ -54,8 +54,10 @@ static QueueHandle_t xQueue2 = NULL;
 typedef struct Msg
 {
 	uint8_t  ucMessageID;
-	uint8_t usData[12];
-	//uint8_t ulData[1];
+	uint8_t  usData[12];
+    uint8_t  long_key_mode_counter;
+    uint8_t  key_long_mode_flag;
+	
 }MSG_T;
 
 MSG_T   gl_tMsg; /* 定义丢�个结构体用于消息队列 */
@@ -144,6 +146,7 @@ static void vTaskRunPro(void *pvParameters)
 			if((ulValue & POWER_KEY_0) != 0)
 			{
         	  power_on_off_flag = 1;
+              gl_tMsg.long_key_mode_counter=0;
               
             }
             else if((ulValue & MODE_KEY_1) != 0){
@@ -155,12 +158,14 @@ static void vTaskRunPro(void *pvParameters)
 
             }
             else if((ulValue & DEC_KEY_2) != 0){
+                gl_tMsg.long_key_mode_counter=0;
                 if(run_t.gPower_On == power_on)
                   key_dec_flag = 1;
               
 
             }
             else if((ulValue & ADD_KEY_3) != 0){
+                gl_tMsg.long_key_mode_counter=0;
                 if(run_t.gPower_On == power_on)
                   key_add_flag = 1;
               
@@ -207,6 +212,21 @@ static void vTaskRunPro(void *pvParameters)
               }
 
             }
+            else if( key_mode_flag == 1 &&  gl_tMsg.key_long_mode_flag !=1){
+                 key_mode_flag ++;
+                 gl_tMsg.long_key_mode_counter=0;
+                 SendData_Buzzer();
+                 mode_key_short_fun();
+             }
+             else if(gl_tMsg.key_long_mode_flag ==1 ){
+                 key_mode_flag =0;
+               
+                 //SendData_Set_Command(0x05,0x01); //link wifi net .
+                 mode_key_long_fun();
+              
+
+
+             }
             else if(key_add_flag ==1 || key_dec_flag ==1 || key_mode_flag == 1){
                 
 
@@ -221,16 +241,17 @@ static void vTaskRunPro(void *pvParameters)
                  dec_key_fun();
 
               } 
-              else if(key_mode_flag == 1){
-                 key_mode_flag++;
-                 SendData_Buzzer();
-                 mode_key_short_fun();
-
-                }
+              
         }
           
           
       if(run_t.gPower_On == power_on){
+
+         if( gpro_t.gTimer_mode_key_long > 1 && gl_tMsg.key_long_mode_flag ==1){
+              gpro_t.gTimer_mode_key_long =0;
+             gpro_t.gTimer_mode_key_long++;
+
+         }
 
        disp_temp_humidity_wifi_icon_handler();
       
@@ -289,7 +310,7 @@ static void vTaskDecoderPro(void *pvParameters)
        	xResult = xTaskNotifyWait(0x00000000,      
 						          0xFFFFFFFF,      
 						          &ulValue,        /* 保存ulNotifiedValue到变量ulValue中 */
-						          xMaxBlockTime);  /* 最大允许延迟时间-等待时间 */
+						          portMAX_DELAY);  /* 最大允许延迟时间-等待时间 */
 		
 		if( xResult == pdPASS )
 		{
@@ -344,6 +365,21 @@ static void vTaskStart(void *pvParameters)
 
      }
      else if(KEY_MODE_GetValue() ==KEY_DOWN){
+
+
+
+          gl_tMsg.long_key_mode_counter ++ ;
+
+          if(gl_tMsg.long_key_mode_counter > 70  && run_t.gPower_On == power_on){
+             gl_tMsg.long_key_mode_counter=0;   
+               gl_tMsg.key_long_mode_flag =1;
+               gpro_t.gTimer_mode_key_long = 0;
+            
+                SendData_Buzzer();
+               
+
+
+          }
 
           xTaskNotify(xHandleTaskRunPro, /* 目标任务 */
                          MODE_KEY_1,            /* 设置目标任务事件标志位bit0  */
@@ -550,6 +586,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 	}
 }
 
+#if 0
 void USART1_Cmd_Error_Handler(void)
 {
    uint32_t temp;
@@ -566,6 +603,8 @@ void USART1_Cmd_Error_Handler(void)
     
   
  }
+
+#endif 
 
 
 

@@ -37,29 +37,23 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     if(tm0>999){ //1000 *1ms = 1000ms = 1s
 		tm0=0;
 		
-		
+		 gpro_t.gTimer_mode_key_long++;
 		run_t.fan_off_60s++;
         run_t.gTimer_wifi_connect_counter++;
-		run_t.dispTime_seconds++;
-		run_t.gTimer_temp_delay++ ;
-		run_t.gTimer_connect_wifi ++;
-        run_t.gTimer_set_temp_times++;
+		run_t.gTimer_disp_time_sencods++;
+		
+
+   
         run_t.gTimer_key_timing++;
-		run_t.gTimer_minute_Counter ++;
+		run_t.gTimer_disp_timer_seconds ++;
 		run_t.gTimer_ptc_fan_warning++;
 
-		run_t.gTimer_usart_error++;
-	    run_t.gTimer_detected_power_key++;
-    
-          run_t.gTimer_timing++;
-	    run_t.gTimer_wifi_led_blink++;
-        run_t.gTimer_first_power_on_flag++;
-        run_t.gTimer_first_power_on_counter++;
-        run_t.gTimer_first_power_off_flag++;
 
-	    if(run_t.dispTime_seconds >59){//60s ->1 minute 
-	      run_t.dispTime_seconds=0;
-		  run_t.gTimer_work_break_times++;
+	  
+    
+         run_t.gTimer_timing++;
+	
+          run_t.gTimer_work_break_times++;
 		 
 		 }
 
@@ -70,5 +64,5 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
    }
  }
-}
+
 
