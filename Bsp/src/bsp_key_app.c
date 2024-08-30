@@ -165,7 +165,7 @@ void power_key_long_fun(void)
     run_t.wifi_led_fast_blink_flag=1;
   
    
-    HAL_Delay(2);
+    //HAL_Delay(2);
 
 
 }

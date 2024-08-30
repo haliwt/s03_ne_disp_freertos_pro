@@ -57,6 +57,9 @@ typedef struct Msg
 	uint8_t  usData[12];
     uint8_t  long_key_mode_counter;
     uint8_t  key_long_mode_flag;
+    //
+    uint8_t  long_key_power_counter;
+    uint8_t  key_long_power_flag;
 	
 }MSG_T;
 
@@ -150,6 +153,7 @@ static void vTaskRunPro(void *pvParameters)
               
             }
             else if((ulValue & MODE_KEY_1) != 0){
+                gl_tMsg.long_key_power_counter =0;
             if(run_t.ptc_warning ==0 && run_t.fan_warning ==0){
                 if(run_t.gPower_On == power_on)
                  key_mode_flag = 1;
@@ -159,6 +163,7 @@ static void vTaskRunPro(void *pvParameters)
             }
             else if((ulValue & DEC_KEY_2) != 0){
                 gl_tMsg.long_key_mode_counter=0;
+                gl_tMsg.long_key_power_counter =0;
                 if(run_t.gPower_On == power_on)
                   key_dec_flag = 1;
               
@@ -166,6 +171,7 @@ static void vTaskRunPro(void *pvParameters)
             }
             else if((ulValue & ADD_KEY_3) != 0){
                 gl_tMsg.long_key_mode_counter=0;
+                gl_tMsg.long_key_power_counter =0;
                 if(run_t.gPower_On == power_on)
                   key_add_flag = 1;
               
@@ -199,8 +205,9 @@ static void vTaskRunPro(void *pvParameters)
     else{
 
      
-        if(power_on_off_flag == 1){
+        if(power_on_off_flag == 1 && gl_tMsg.key_long_power_flag !=1){
              power_on_off_flag++;
+             gl_tMsg.key_long_power_flag=0;
              if(run_t.gPower_On == power_off){
                 power_key_short_fun();
 
@@ -212,6 +219,11 @@ static void vTaskRunPro(void *pvParameters)
               }
 
             }
+            else if(gl_tMsg.key_long_power_flag ==1){
+                   power_on_off_flag=0;
+                   power_key_long_fun();
+
+            }
             else if( key_mode_flag == 1 &&  gl_tMsg.key_long_mode_flag !=1){
                  key_mode_flag ++;
                  gl_tMsg.long_key_mode_counter=0;
@@ -221,6 +233,7 @@ static void vTaskRunPro(void *pvParameters)
              else if(gl_tMsg.key_long_mode_flag ==1 ){
                  key_mode_flag =0;
                  mode_key_long_fun();
+                 SendData_Set_Command(0x05,0x01); // link wifi of command .
                 
 
             }
@@ -244,8 +257,9 @@ static void vTaskRunPro(void *pvParameters)
           
       if(run_t.gPower_On == power_on){
 
-         if( gpro_t.gTimer_mode_key_long > 1 && gl_tMsg.key_long_mode_flag  ==1){
+         if( gpro_t.gTimer_mode_key_long > 1 && (gl_tMsg.key_long_mode_flag  ==1 ||gl_tMsg.key_long_power_flag ==1)){
               gpro_t.gTimer_mode_key_long =0;
+              gl_tMsg.key_long_power_flag++;
               gl_tMsg.key_long_mode_flag ++;
 
          }
@@ -353,8 +367,20 @@ static void vTaskStart(void *pvParameters)
       
     if(KEY_POWER_GetValue()  ==KEY_DOWN){
 
-           
-           xTaskNotify(xHandleTaskRunPro, /* 目标任务 */
+           gl_tMsg.long_key_power_counter ++ ;
+
+          if(gl_tMsg.long_key_power_counter > 70  && run_t.gPower_On == power_on){
+             gl_tMsg.long_key_power_counter=0;   
+               gl_tMsg.key_long_power_flag =1;
+               gpro_t.gTimer_mode_key_long = 0;
+            
+                SendData_Buzzer();
+               
+
+
+          }
+
+         xTaskNotify(xHandleTaskRunPro, /* 目标任务 */
                         POWER_KEY_0,            /* 设置目标任务事件标志位bit0  */
                          eSetBits);          /* 将目标任务的事件标志位与BIT_0进行或操作，  将结果赋值给事件标志位��1�7*/
 
