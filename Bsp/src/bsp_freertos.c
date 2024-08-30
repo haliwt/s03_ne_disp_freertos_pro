@@ -233,7 +233,7 @@ static void vTaskRunPro(void *pvParameters)
              else if(gl_tMsg.key_long_mode_flag ==1 ){
                  key_mode_flag =0;
                  mode_key_long_fun();
-                 SendData_Set_Command(0x05,0x01); // link wifi of command .
+                
                 
 
             }
@@ -259,7 +259,12 @@ static void vTaskRunPro(void *pvParameters)
 
          if( gpro_t.gTimer_mode_key_long > 1 && (gl_tMsg.key_long_mode_flag  ==1 ||gl_tMsg.key_long_power_flag ==1)){
               gpro_t.gTimer_mode_key_long =0;
-              gl_tMsg.key_long_power_flag++;
+              if(gl_tMsg.key_long_power_flag==1){
+
+                gl_tMsg.key_long_power_flag++;
+
+                 SendData_Set_Command(0x05,0x01); // link wifi of command .
+              }
               gl_tMsg.key_long_mode_flag ++;
 
          }
