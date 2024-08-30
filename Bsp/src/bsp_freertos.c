@@ -221,7 +221,7 @@ static void vTaskRunPro(void *pvParameters)
              else if(gl_tMsg.key_long_mode_flag ==1 ){
                  key_mode_flag =0;
                  mode_key_long_fun();
-              
+                
 
             }
             else if(key_add_flag ==1 || key_dec_flag ==1 || key_mode_flag == 1){
@@ -244,9 +244,9 @@ static void vTaskRunPro(void *pvParameters)
           
       if(run_t.gPower_On == power_on){
 
-         if( gpro_t.gTimer_mode_key_long > 1 && gl_tMsg.key_long_mode_flag ==1){
+         if( gpro_t.gTimer_mode_key_long > 1 && gl_tMsg.key_long_mode_flag  ==1){
               gpro_t.gTimer_mode_key_long =0;
-             gpro_t.gTimer_mode_key_long++;
+              gl_tMsg.key_long_mode_flag ++;
 
          }
 

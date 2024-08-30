@@ -7,12 +7,15 @@
 void disp_temp_humidity_wifi_icon_handler(void);
 
 
-void disp_normal_timing_and_fan_icon_handler(void);
+
 
 
 void disp_time_colon_ion_handler(void);
 
 void disp_fan_leaf_run_icon(void);
+
+
+
 
 
 #endif 

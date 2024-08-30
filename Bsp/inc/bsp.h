@@ -51,6 +51,8 @@ void bsp_init(void);
 
 void mode_key_long_fun(void);
 
+
+
 void disp_timer_time_and_fan_icon_handler(void);
 
 
