@@ -181,12 +181,15 @@ typedef struct __RUN{
 
 extern RUN_T run_t;
 
+void Timing_Handler(void);
 
 
+void receive_data_fromm_mainboard(uint8_t *pdata);
+
+uint8_t bcc_check(const unsigned char *data, int len) ;
 
 
-
-void RunCommand_Handler(void);
+void Setup_Timer_Times_Donot_Display(void);
 
 
 #endif 

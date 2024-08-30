@@ -14,7 +14,7 @@
 
 
 #define MODE_LONG_KEY_8         (1 << 8)
-
+#define DECODER_BIT_9          (1<< 9)
 
 
 /***********************************************************************************************************
@@ -58,40 +58,35 @@ typedef struct Msg
 	//uint8_t ulData[1];
 }MSG_T;
 
-MSG_T   g_tMsg; /* 定义丢�个结构体用于消息队列 */
-
-volatile uint8_t decoder_flag;
-
-volatile uint8_t ulid,uldata,usdata;
-
+MSG_T   gl_tMsg; /* 定义丢�个结构体用于消息队列 */
 
 uint32_t mode_key_long_conter;
 
-uint8_t rxcmd[1];
+uint8_t  rx_end_counter,ulid,rx_data_counter,rx_end_flag;
 
-volatile uint8_t rx_data_counter;
+uint8_t check_code;
 
-uint8_t rx_end_flag  ;
-uint8_t rx_end_counter, rx_end_counter_compare;
-
+uint8_t bcc_check_code;
 
 
-/*
-*********************************************************************************************************
+
+
+
+
+/**********************************************************************************************************
 *	凄1�71ￄ1�77 敄1�71ￄ1�77 各1�71ￄ1�77: vTaskTaskUserIF
 *	功能说明: 接口消息处理〄1�71ￄ1�77
 *	彄1�71ￄ1�77    叄1�71ￄ1�77: pvParameters 是在创建该任务时传��的形参
 *	迄1�71ￄ1�77 囄1�71ￄ1�77 倄1�71ￄ1�77: 旄1�71ￄ1�77
 *   伄1�71ￄ1�77 兄1�71ￄ1�77 纄1�71ￄ1�77: 1  (数��越小优先级越低，这个跟uCOS相反)
-*********************************************************************************************************
-*/
+**********************************************************************************************************/
 void freeRTOS_Handler(void)
 {
      /* 创建任务 */
 	  AppTaskCreate();
 	  
 	  /* 创建任务通信机制 */
-	   AppObjCreate();
+	 //  AppObjCreate();
 	  
 	  /* 启动调度，开始执行任劄1�71ￄ1�77 */
 	   vTaskStartScheduler();
@@ -171,6 +166,26 @@ static void vTaskRunPro(void *pvParameters)
               
            
             }
+            #if 1
+             if((ulValue & DECODER_BIT_9) != 0)
+               {
+                
+                 
+               gpro_t.disp_rx_cmd_done_flag = 0;
+    
+                check_code =  bcc_check(gl_tMsg.usData,ulid);
+    
+              
+    
+                  if(check_code == bcc_check_code ){
+              
+                   receive_data_fromm_mainboard(gl_tMsg.usData);
+                   }
+    
+    
+    
+               }
+            #endif 
           
           
 
@@ -246,14 +261,14 @@ static void vTaskRunPro(void *pvParameters)
 **********************************************************************************************************/
 static void vTaskDecoderPro(void *pvParameters)
 {
-    MSG_T *ptMsg;
+   // MSG_T *ptMsg;
 	BaseType_t xResult;
 	const TickType_t xMaxBlockTime = pdMS_TO_TICKS(300); /* 设置朢�大等待时间为30ms */
-	//uint8_t uldata,usdata;
+    uint32_t ulValue;
 	
     while(1)
     {
-		
+	   #if 0
        xResult = xQueueReceive(xQueue2,                   /* 消息队列句柄 */
 		                        (void *)&ptMsg,  		   /* 这里获取的是结构体的地址 */
 		                        (TickType_t)xMaxBlockTime);/* 设置阻塞时间 */
@@ -268,6 +283,38 @@ static void vTaskDecoderPro(void *pvParameters)
           
            receive_data_fromm_mainboard(ptMsg->usData,ulid);
          }
+
+       #endif 
+
+       	xResult = xTaskNotifyWait(0x00000000,      
+						          0xFFFFFFFF,      
+						          &ulValue,        /* 保存ulNotifiedValue到变量ulValue中 */
+						          xMaxBlockTime);  /* 最大允许延迟时间-等待时间 */
+		
+		if( xResult == pdPASS )
+		{
+
+            if((ulValue & DECODER_BIT_9) != 0)
+			{
+        	 
+              
+            gpro_t.disp_rx_cmd_done_flag = 0;
+
+             check_code =  bcc_check(gl_tMsg.usData,ulid);
+
+           
+
+               if(check_code == bcc_check_code ){
+           
+                receive_data_fromm_mainboard(gl_tMsg.usData);
+                }
+
+
+
+            }
+
+
+       }
       
     }
 }
@@ -343,20 +390,23 @@ void AppTaskCreate (void)
                  NULL,        		/* 任务参数  */
                  1,           		/* 任务优先纄1�71ￄ1�77 数��越小优先级越低，这个跟uCOS相反 */
                  &xHandleTaskRunPro); /* 任务句柄  */
-	
-	xTaskCreate( vTaskDecoderPro,     		/* 任务函数  */
+
+  
+    #if 0
+    xTaskCreate( vTaskDecoderPro,     		/* 任务函数  */
                  "vTaskDecoderPro",   		/* 任务各1�71ￄ1�77    */
                  128,             		/* 任务栈大小，单位word，也就是4字节 */
                  NULL,           		/* 任务参数  */
                  2,               		/* 任务优先纄1�71ￄ1�77 数��越小优先级越低，这个跟uCOS相反 */
                  &xHandleTaskDecoderPro );  /* 任务句柄  */
-	
+   
+	#endif 
 	
 	xTaskCreate( vTaskStart,     		/* 任务函数  */
                  "vTaskStart",   		/* 任务各1�71ￄ1�77    */
                  128,            		/* 任务栈大小，单位word，也就是4字节 */
                  NULL,           		/* 任务参数  */
-                 3,              		/* 任务优先纄1�71ￄ1�77 数��越小优先级越低，这个跟uCOS相反 */
+                 2,              		/* 任务优先纄1�71ￄ1�77 数��越小优先级越低，这个跟uCOS相反 */
                  &xHandleTaskStart );   /* 任务句柄  */
 }
 
@@ -370,7 +420,7 @@ void AppTaskCreate (void)
 *	迄1�71ￄ1�77 囄1�71ￄ1�77 倄1�71ￄ1�77: 旄1�71ￄ1�77
 *********************************************************************************************************
 */
-# if 1 
+# if 0
 void AppObjCreate (void)
 {
     #if 1
@@ -434,225 +484,72 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
        switch(state)
 		{
 		case 0:  //#0
-			if(inputBuf[0]==0x5A)  {//hex :4D - "M" -fixed mainboard
-               
-             
-				state=1; 
-		    }
-			else{
-			    state=0; //=1
+			if(inputBuf[0] == 0x5A){  // 0x5A --main board singla
+               rx_data_counter=0;
+               gl_tMsg.usData[rx_data_counter] = inputBuf[0];
+				state=1; //=1
+
+             }
+            else
+                state=0;
+		break;
+
+       
+		case 1: //#1
+
+            if(gpro_t.disp_rx_cmd_done_flag ==0){
+              /* 初始化结构体指针 */
+               rx_data_counter++;
+		     
+	          gl_tMsg.usData[rx_data_counter] = inputBuf[0];
               
 
-			}
-			break;
-		case 1: //#1
-		       
-                   ptMsg = &g_tMsg;
-                   ptMsg->usData[rx_data_counter] =  inputBuf[0];
-                   rx_data_counter++;
+              if(rx_end_flag == 1){
 
-                   if(inputBuf[rx_data_counter]==0x0A && rx_end_flag == 0){
+                state = 0;
+            
+                ulid = rx_data_counter;
+                rx_end_flag=0;
+
+                rx_data_counter =0;
+
+                gpro_t.disp_rx_cmd_done_flag = 1 ;
+
+         
+
+                bcc_check_code=inputBuf[0];
+
+              
+                xTaskNotifyFromISR(xHandleTaskRunPro,  /* 目标任务 */
+                DECODER_BIT_9,     /* 设置目标任务事件标志位bit0  */
+                eSetBits,  /* 将目标任务的事件标志位与BIT_0进行或操作， 将结果赋值给事件标志位 */
+                &xHigherPriorityTaskWoken);
+
+                /* 如果xHigherPriorityTaskWoken = pdTRUE，那么退出中断后切到当前最高优先级任务执行 */
+                portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+                  
+              }
+
+              }
+
+              if(gl_tMsg.usData[rx_data_counter] ==0xFE && rx_end_flag == 0 &&  rx_data_counter > 4){
                      
                           rx_end_flag = 1 ;
-                          rx_end_counter = rx_data_counter;
                           
-                    }
-                    else if(rx_end_flag == 1){
-
-                      rx_end_counter_compare = rx_data_counter - rx_end_counter;
-                      if(rx_end_counter_compare == 1){
-                   
-                          if(inputBuf[rx_data_counter]==0x0D){
-
-                              rx_end_counter_compare ++ ;
-
-
-                          }
-
-                        }
-                        else{
-                           rx_end_flag = 0;
-                         
-
-
-                        }
-
-
-                    }
-                    
-                   
-
-               
-               if(rx_end_counter_compare == 2){
-
-                      rx_end_counter_compare=0;
-                      rx_end_flag=0;
-                      rx_data_counter=0;
-                   /* 向消息队列发数据 */
-                     /* 初始化结构体指针 */
-                     ptMsg = &g_tMsg;
-                     ptMsg->ucMessageID=rx_data_counter;
-                     
-                	xQueueSendFromISR(xQueue2,
-                				      (void *)&ptMsg,
-                				      &xHigherPriorityTaskWoken);
-
-                	/* 如果xHigherPriorityTaskWoken = pdTRUE，那么���出中断后切到当前朢�高优先级任务执行 */
-                	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-			
-
+                        
                }
-		      
-			break;
-       #if 0
-		case 2://#2
-			if(inputBuf[0]=='D'||inputBuf[0]==0x4B || inputBuf[0]=='E'){
-				if(inputBuf[0]=='D'){
-                    rx_mb_data_tag=PANEL_DATA;
-                    state = 3;
 
-                }
-                else if(inputBuf[0]=='E'){
-                  rx_mb_data_tag=ORDER_DATA;
-                  state=3;
-                }
-                else if(inputBuf[0]==0x4B){
-                    state = 5;
-
-                }
-				
-			}
-            else{
-				state=0;
-				
-
-
-				}
-			break;
-            
-        case 3:
-
-            if(rx_mb_data_tag==PANEL_DATA){
-            
-                // run_t.gReal_humtemp[0]=inputBuf[0]; //Humidity value 
-                  rxcmd[0]=inputBuf[0];
-                  state = 4; 
-                
-             }
-			else if(rx_mb_data_tag==ORDER_DATA){
-
-                rxcmd[0]=  inputBuf[0];  
-                /* 初始化结构体指针 */
-                ptMsg = &g_tMsg;
-                ptMsg->ucMessageID=ORDER_DATA;
-    		    ptMsg->ulData[0] = inputBuf[0]; //rxcmd[0];
-                ptMsg ->usData[0] = 0;
-               
-               
-
-                 /* 向消息队列发数据 */
-            	xQueueSendFromISR(xQueue2,
-            				      (void *)&ptMsg,
-            				      &xHigherPriorityTaskWoken);
-
-            	/* 如果xHigherPriorityTaskWoken = pdTRUE，那么���出中断后切到当前朢�高优先级任务执行 */
-            	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-
-             
-           
-
-                state=0;
-
-			}
-            else {
-               state = 0; 
-          
-            }
-	    break;
-        
-		case 4: //
-
-		 if(rx_mb_data_tag==PANEL_DATA){
-              //run_t.gReal_humtemp[1]=inputBuf[0]; //temperature value
-              
-               /* 初始化结构体指针 */
-                ptMsg = &g_tMsg;
-                ptMsg->ucMessageID = PANEL_DATA;
-    		    ptMsg->ulData[0] =  rxcmd[0];
-                ptMsg ->usData[0] = inputBuf[0];
-               
-               
-
-                 /* 向消息队列发数据 */
-            	xQueueSendFromISR(xQueue2,
-            				      (void *)&ptMsg,
-            				      &xHigherPriorityTaskWoken);
-
-            	/* 如果xHigherPriorityTaskWoken = pdTRUE，那么���出中断后切到当前朢�高优先级任务执行 */
-            	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-			
-		     state=0;
-		    
-		
-              
-          }
-         else {
-
-		
-			state =0;
-
-         }
-		
-		 
-		 break;
-
-         case 5:
-
-           rxcmd[0]=inputBuf[0];
-
-           state = 6;
-
-
-         break;
-
-
-		 case 6:
-
-            /* 初始化结构体指针 */
-            ptMsg = &g_tMsg;
-            ptMsg->ucMessageID=ANSWER_DATA;
-		    ptMsg->ulData[0] = rxcmd[0];
-            ptMsg ->usData[0] =  inputBuf[0];
-           
-           
-
-             /* 向消息队列发数据 */
-        	xQueueSendFromISR(xQueue2,
-        				      (void *)&ptMsg,
-        				      &xHigherPriorityTaskWoken);
-
-        	/* 如果xHigherPriorityTaskWoken = pdTRUE，那么���出中断后切到当前朢�高优先级任务执行 */
-        	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-	       
-		 
-             state=0;
         break;
-           
-       
-		
-		
-		default:
-			
-		break;
-		}
-      #endif 
 
-          ENABLE_INT();
+
+			
+		}
+        ENABLE_INT();
        __HAL_UART_CLEAR_OREFLAG(&huart1);
 		HAL_UART_Receive_IT(&huart1,inputBuf,1);//UART receive data interrupt 1 byte
 	}
 }
-}
+
 void USART1_Cmd_Error_Handler(void)
 {
    uint32_t temp;

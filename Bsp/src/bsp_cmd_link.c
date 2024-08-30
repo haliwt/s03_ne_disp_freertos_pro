@@ -58,12 +58,12 @@ void SendData_Buzzer(void)
 	
 }
 
-void SendData_Set_Command(uint8_t hdata)
+void SendData_Set_Command(uint8_t cmd,uint8_t data)
 {
     outputBuf[0]=0xA5; //display board head = 0xA5
 	outputBuf[1]= 0x01; //display device Number:is 0x01
-	outputBuf[2]=0x06; // command type = 0x06 ->buzzer sound open or not
-	outputBuf[3]=0x01; // command order -> 01 - buzzer sound done, 00- don't buzzer sound 
+	outputBuf[2]=cmd; // command type = 0x06 ->buzzer sound open or not
+	outputBuf[3]= data; // command order -> 01 - buzzer sound done, 00- don't buzzer sound 
 	outputBuf[4]=0x00; // data is length: 00 ->don't data 
 	outputBuf[5]=0xFE; // frame of end code -> 0xFE.
     outputBuf[6] = bcc_check(outputBuf,6);

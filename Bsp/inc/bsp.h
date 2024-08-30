@@ -35,6 +35,17 @@
 #endif
 
 
+typedef struct _process_state{
+
+   uint8_t disp_rx_cmd_done_flag;
+
+
+}process_state;
+
+
+extern process_state gpro_t;
+
+
 void bsp_init(void);
 
 
