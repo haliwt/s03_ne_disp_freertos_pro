@@ -398,6 +398,9 @@ void power_off_handler(void)
 		run_t.power_off_id_flag++;     
     	Power_Off_Fun();
         SendData_PowerOnOff(0);
+
+       LED_MODEL_OFF();
+	   POWER_ON_LED();
 		
        
    
@@ -443,12 +446,13 @@ void power_off_handler(void)
 		run_t.fan_off_60s =0;
 		run_t.gFan_RunContinue=1;
 	}
+    
 	lcd_power_off_donot_fan_Fun();
+    
      Breath_Led();
 	if(run_t.gFan_RunContinue == 1){
            if(run_t.fan_off_60s < 61){
-		      LED_MODEL_OFF();
-			  POWER_ON_LED();
+		      LCD_BACK_LIGHT_ON();
 		      LCD_Display_Wind_Icon_Handler();
            	}
 		   else {
