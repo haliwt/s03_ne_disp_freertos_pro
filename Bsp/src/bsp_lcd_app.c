@@ -20,6 +20,8 @@ void disp_temp_humidity_wifi_icon_handler(void)
 {
     
      static uint8_t timer_timg_flag;
+
+     static uint8_t number_blink_times;
 	
 	 TIM1723_Write_Cmd(0x00);
 	 TIM1723_Write_Cmd(0x40);
@@ -27,9 +29,8 @@ void disp_temp_humidity_wifi_icon_handler(void)
 
    /***********************setup temperature value ********************************/
 	 //digital 1,2 ->display "temperature"  blink  
-	
-	 if(run_t.setup_temperature_value ==1){
-	     static uint8_t number_blink_times;
+	if(run_t.setup_temperature_value ==1){
+	     
 	 if(run_t.gTimer_numbers_one_two_blink < 6  ){ //disp number
 	     //display address 0xC2
 	     if(run_t.gDry ==1 && run_t.gPlasma ==1  && run_t.gUltransonic==1)
@@ -103,12 +104,9 @@ void disp_temp_humidity_wifi_icon_handler(void)
 		     if(number_blink_times > 3){
                  number_blink_times =0;
 				 run_t.setup_temperature_value =0;
-			     run_t.panel_key_setup_timer_flag=0;
-				 run_t.temperature_set_flag = 1;
-				
-				
-				 
-			 }
+                 gpro_t.set_temp_value_success = 1;
+                 gpro_t.gTimer_temp_copare_value =20; //at once 
+			}
 
 		}
         TIM1723_Write_Cmd(LUM_VALUE);//(0x9B);
@@ -177,7 +175,7 @@ void disp_temp_humidity_wifi_icon_handler(void)
 	 else if(run_t.wifi_connect_flag ==1){//wifi be connect is OK 
            run_t.wifi_led_fast_blink_flag=0;
            TM1723_Write_Display_Data(0xC5,(WIFI_Symbol+lcdNumber3_Low[lcd_t.number3_low] + lcdNumber4_High[lcd_t.number4_high]) & 0xff); //Wifi
-         //  TIM1723_Write_Cmd(LUM_VALUE);
+         
 	 }
 	
 	 TIM1723_Write_Cmd(LUM_VALUE);//(0x97);//(0x94);//(0x9B);

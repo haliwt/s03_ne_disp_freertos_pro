@@ -167,6 +167,60 @@ static void disp_set_timer_timing_value_fun(void)
 *
 *
 *****************************************************************************************************/
+void set_temperature_compare_value_fun(void)
+{
+
+    static uint8_t first_on_ptc;
+
+    if(gpro_t.temp_key_set_value ==1 && gpro_t.gTimer_set_temp_times > 1){
+    
+         run_t.setup_temperature_value =1;
+          gpro_t.temp_key_set_value =0;
+          gpro_t.gTimer_temp_copare_value =0;
+
+    }
+    else if(gpro_t.set_temp_value_success == 1 && gpro_t.gTimer_temp_copare_value > 3 && gpro_t.temp_key_set_value ==0){
+
+       gpro_t.gTimer_temp_copare_value =0;
+
+      if(run_t.wifi_set_temperature > gpro_t.temp_real_value){
+
+            run_t.gDry = 1;
+            SendData_Set_Command(0x22,0x01); //open ptc 
+      }
+      else{
+           run_t.gDry = 0;
+           SendData_Set_Command(0x22,0x00); //close ptc  
+
+
+      }
+
+
+
+    }
+    else if(gpro_t.set_temp_value_success == 0 && gpro_t.gTimer_temp_copare_value > 5 && gpro_t.temp_key_set_value ==0){ 
+        
+        if(gpro_t.temp_real_value > 39){ // must be clouse ptc.
+    
+               first_on_ptc = 1;
+               run_t.gDry = 0;
+               SendData_Set_Command(0x22,0x00); //close ptc 
+          }
+          else if(first_on_ptc == 1){
+               
+                 
+               if(gpro_t.temp_real_value < 38){
+                       run_t.gDry = 1;
+                       SendData_Set_Command(0x22,0x01); //open ptc  
+                }
+                   
+
+          }
+              
+    }
+
+}
+
 
 
 

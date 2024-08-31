@@ -24,12 +24,6 @@ void (*sendAi_usart_fun)(uint8_t senddat);
 void (*beijing_time_fun)(void);
 
 
-
-
-//static void Timing_Handler(void);
-//static void Power_Off_Fun(void);
-static void Power_On_Fun(void);
-
 static void Works_Counter_Time(void);
 
 static void Beijing_Time_Display(void);
@@ -70,15 +64,10 @@ void power_off_handler(void)
     run_t.wifi_receive_power_on_flag=0;
     run_t.power_key_interrupt_counter=0;//WT.EDIT 2023.07.25
 	
-  
-	run_t.temperature_set_flag = 0;
-
-	run_t.wifi_set_temperature_value_flag=0;
- 
     run_t.wifi_led_fast_blink_flag=0;
    
 	run_t.works_counter_time_value=0;
-	run_t.panel_key_setup_timer_flag=0;
+	
     run_t.setup_temperature_value=0;
     run_t.timer_time_hours =0;
 	run_t.timer_time_minutes =0;
@@ -138,10 +127,57 @@ void power_key_short_fun(void)
 {
   
    
-  
-    Power_On_Fun();
+   if(gpro_t.app_power_on_flag == 0){
+
+    	run_t.gModel =1; //WT.EDIT 2022.09.01
+    	run_t.gPlasma=1;
+    	run_t.gDry =1;
+    	run_t.gUltransonic =1;
+
+    }
+	
+	gpro_t.set_temp_value_success =0;
+    run_t.setup_temperature_value=0; // //WT.EDIT 2023.01.31
+    run_t.disp_wind_speed_grade =100;
+	
+
+
+	
+     run_t.gTimer_timing=0;
+
+	 run_t.timer_time_hours =0;
+	 run_t.timer_time_minutes =0;
+	 run_t.setup_timer_timing_item=0;
+
+	 run_t.timer_timing_define_flag = timing_not_definition;
+
+	 
+
+	 if(lcd_t.display_beijing_time_flag == 0 ){
+
+	 run_t.gTimer_disp_time_sencods=0;
+	 run_t.dispTime_hours=0;
+     run_t.dispTime_minutes=0;
+	 
+		 
+	
+
+	 lcd_t.number5_low=(run_t.dispTime_hours ) /10;
+     lcd_t.number5_high =(run_t.dispTime_hours) /10;
+
+	 lcd_t.number6_low = (run_t.dispTime_hours ) %10;;
+	 lcd_t.number6_high = (run_t.dispTime_hours ) %10;
+     
+     lcd_t.number7_low = (run_t.dispTime_minutes )/10;
+	 lcd_t.number7_high = (run_t.dispTime_minutes )/10;
+
+	 lcd_t.number8_low = (run_t.dispTime_minutes )%10;
+	 lcd_t.number8_high = (run_t.dispTime_minutes )%10;
+	
+	 
+	 }
 	run_t.power_off_id_flag =1;
-    run_t.gPower_On=power_on;
+ 
     run_t.setup_timer_timing_item=0;
    
 
@@ -150,7 +186,7 @@ void power_key_short_fun(void)
   
   
      Lcd_PowerOn_Fun();
-     SendData_PowerOnOff(1);
+    
 }
 
 void power_key_long_fun(void)
@@ -214,7 +250,7 @@ void add_key_fun(void)
 
 	case 0: //set temperature value add number
 
-		run_t.wifi_set_temperature_value_flag =0;
+		
 		run_t.wifi_set_temperature ++;
         if(run_t.wifi_set_temperature < 20){
 		    run_t.wifi_set_temperature=20;
@@ -238,9 +274,8 @@ void add_key_fun(void)
 		lcd_t.number2_low = unit_temp;
 		lcd_t.number2_high = unit_temp;
 
-		run_t.panel_key_setup_timer_flag = 1;
-        
-
+        gpro_t.temp_key_set_value = 1;
+         gpro_t.gTimer_set_temp_times = 0;
 			
 	
 	   break;
@@ -298,7 +333,7 @@ void dec_key_fun(void)
 
 		   case 0: 
 	
-	        run_t.wifi_set_temperature_value_flag =0;
+	   
 			run_t.wifi_set_temperature--;
 			if(run_t.wifi_set_temperature<20) run_t.wifi_set_temperature=40;
 	        if(run_t.wifi_set_temperature >40)run_t.wifi_set_temperature=40;
@@ -319,7 +354,10 @@ void dec_key_fun(void)
 			lcd_t.number2_low = unit_temp;
 			lcd_t.number2_high = unit_temp;
 			
-			run_t.panel_key_setup_timer_flag = 1;
+		
+            //run_t.setup_temperature_value =1;
+             gpro_t.temp_key_set_value = 1;
+             gpro_t.gTimer_set_temp_times = 0;
 	
 		    break;
 
@@ -398,62 +436,7 @@ void dec_key_fun(void)
 
 
 
-static void Power_On_Fun(void)
-{
-                
-	run_t.gPower_On=POWER_ON_ITEM;
 
-	
-	run_t.gFan_RunContinue=0;
-
-	run_t.gModel =1; //WT.EDIT 2022.09.01
-	run_t.gPlasma=1;
-	run_t.gDry =1;
-	run_t.gUltransonic =1;
-	
-	run_t.temperature_set_flag = 0; //WT.EDIT 2023.01.31
-    run_t.setup_temperature_value=0; // //WT.EDIT 2023.01.31
-    run_t.disp_wind_speed_grade =100;
-	
-	run_t.wifi_send_buzzer_sound=0xff;
-
-	 run_t.gTimer_disp_timer_seconds=0;
-     run_t.gTimer_timing=0;
-
-	 run_t.timer_time_hours =0;
-	 run_t.timer_time_minutes =0;
-	 run_t.setup_timer_timing_item=0;
-
-	 run_t.timer_timing_define_flag = timing_not_definition;
-
-	 
-
-	 if(lcd_t.display_beijing_time_flag == 0 ){
-
-	 run_t.gTimer_disp_time_sencods=0;
-	 run_t.dispTime_hours=0;
-     run_t.dispTime_minutes=0;
-	 
-		 
-	
-
-	 lcd_t.number5_low=(run_t.dispTime_hours ) /10;
-     lcd_t.number5_high =(run_t.dispTime_hours) /10;
-
-	 lcd_t.number6_low = (run_t.dispTime_hours ) %10;;
-	 lcd_t.number6_high = (run_t.dispTime_hours ) %10;
-     
-     lcd_t.number7_low = (run_t.dispTime_minutes )/10;
-	 lcd_t.number7_high = (run_t.dispTime_minutes )/10;
-
-	 lcd_t.number8_low = (run_t.dispTime_minutes )%10;
-	 lcd_t.number8_high = (run_t.dispTime_minutes )%10;
-	
-	 
-	 }
-
-}
-  
 
 /*********************************************************************************
  * 

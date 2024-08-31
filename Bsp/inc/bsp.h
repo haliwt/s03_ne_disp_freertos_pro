@@ -39,6 +39,17 @@ typedef struct _process_state{
 
    uint8_t disp_rx_cmd_done_flag;
    uint8_t gTimer_mode_key_long;
+   uint8_t temp_key_set_value ;
+   uint8_t set_temp_value_success;
+   uint8_t humidity_real_value;
+   uint8_t  temp_real_value;
+   uint8_t  app_power_on_flag;
+
+
+   //
+   uint8_t gTimer_set_temp_times;
+   uint8_t gTimer_temp_copare_value;
+   
 
 
 }process_state;
@@ -50,6 +61,9 @@ extern process_state gpro_t;
 void bsp_init(void);
 
 void mode_key_long_fun(void);
+
+void set_temperature_compare_value_fun(void);
+
 
 
 

@@ -209,6 +209,9 @@ static void vTaskRunPro(void *pvParameters)
              power_on_off_flag++;
              gl_tMsg.key_long_power_flag=0;
              if(run_t.gPower_On == power_off){
+
+               run_t.gPower_On = power_on;
+                SendData_PowerOnOff(1);
                 power_key_short_fun();
 
               }
@@ -268,7 +271,7 @@ static void vTaskRunPro(void *pvParameters)
               gl_tMsg.key_long_mode_flag ++;
 
          }
-
+       set_temperature_compare_value_fun();
        disp_temp_humidity_wifi_icon_handler();
 
        disp_timer_time_and_fan_icon_handler();
@@ -365,25 +368,20 @@ static void vTaskDecoderPro(void *pvParameters)
 **********************************************************************************************************/
 static void vTaskStart(void *pvParameters)
 {
-	
-
-    while(1)
+	while(1)
     {
       
     if(KEY_POWER_GetValue()  ==KEY_DOWN){
 
            gl_tMsg.long_key_power_counter ++ ;
 
-          if(gl_tMsg.long_key_power_counter > 70  && run_t.gPower_On == power_on){
+          if(gl_tMsg.long_key_power_counter > 90  && run_t.gPower_On == power_on){
              gl_tMsg.long_key_power_counter=0;   
                gl_tMsg.key_long_power_flag =1;
                gpro_t.gTimer_mode_key_long = 0;
             
                 SendData_Buzzer();
-               
-
-
-          }
+           }
 
          xTaskNotify(xHandleTaskRunPro, /* 目标任务 */
                         POWER_KEY_0,            /* 设置目标任务事件标志位bit0  */
@@ -398,7 +396,7 @@ static void vTaskStart(void *pvParameters)
 
           gl_tMsg.long_key_mode_counter ++ ;
 
-          if(gl_tMsg.long_key_mode_counter > 70  && run_t.gPower_On == power_on){
+          if(gl_tMsg.long_key_mode_counter > 90  && run_t.gPower_On == power_on){
              gl_tMsg.long_key_mode_counter=0;   
                gl_tMsg.key_long_mode_flag =1;
                gpro_t.gTimer_mode_key_long = 0;

@@ -19,7 +19,7 @@ uint8_t temp;
 ******************************************************************************/
 void receive_data_fromm_mainboard(uint8_t *pdata)
 {
-     uint8_t hum1,hum2,temp1,temp2; 
+     uint8_t hum1,hum2,temp1,temp2,decade_temp,unit_temp; 
 
     switch(pdata[2]){
 
@@ -46,11 +46,12 @@ void receive_data_fromm_mainboard(uint8_t *pdata)
 
      if(pdata[3] == 0x01){
 
-
+            run_t.gDry =1 ;//&& run_t.gPlasma ==1  && run_t.gUltransonic==1
         }
         else if(pdata[3] == 0x0){
 
 
+            run_t.gDry =0;
 
         }
 
@@ -59,12 +60,13 @@ void receive_data_fromm_mainboard(uint8_t *pdata)
      case 0x03: //PLASMA 打开关闭指令
 
         if(pdata[3] == 0x01){
+        run_t.gPlasma =1;
 
 
         }
         else if(pdata[3] == 0x0){
 
-
+         run_t.gPlasma =0;
 
         }
 
@@ -75,12 +77,12 @@ void receive_data_fromm_mainboard(uint8_t *pdata)
       case 0x04: //ultrasonic  打开关闭指令
 
         if(pdata[2] == 0x01){  //open 
-
+            run_t.gUltransonic=1;
 
         }
         else if(pdata[2] == 0x0){ //close 
 
-
+          run_t.gUltransonic=0;
 
         }
 
@@ -109,12 +111,14 @@ void receive_data_fromm_mainboard(uint8_t *pdata)
         if(pdata[4] == 0x02){ //数据
         
            
-         
+             
+             gpro_t.humidity_real_value = pdata[5];
+             gpro_t.temp_real_value = pdata[6];
 
              //humidity_value 
 
-            hum1 = pdata[5] / 10;
-            hum2 = pdata[5] % 10;
+            hum1 =  gpro_t.humidity_real_value/ 10;
+            hum2 =  gpro_t.humidity_real_value % 10;
 
            lcd_t.number3_low= hum1;
 		   lcd_t.number3_high =hum1;
@@ -123,9 +127,9 @@ void receive_data_fromm_mainboard(uint8_t *pdata)
 	       lcd_t.number4_high = hum2;
 
             //temperature_value 
-          temp = pdata[6];
-          temp1 =   temp/ 10;
-          temp2   = temp % 10;
+        //  temp = pdata[6];
+          temp1 =   gpro_t.temp_real_value/ 10;
+          temp2   = gpro_t.temp_real_value% 10;
 
            lcd_t.number1_low= temp1;
 		   lcd_t.number1_high =temp1;
@@ -153,7 +157,7 @@ void receive_data_fromm_mainboard(uint8_t *pdata)
 
         if(pdata[4] == 0x03){ //数据
 
-        
+            lcd_t.display_beijing_time_flag= 1;
 
             run_t.dispTime_hours  =  pdata[5];
             run_t.dispTime_minutes = pdata[6];
@@ -170,6 +174,40 @@ void receive_data_fromm_mainboard(uint8_t *pdata)
              
             
         }
+      break;
+
+      case 0x1F: //link wifi if success .
+        
+      if(pdata[3] == 0x01){  // link wifi 
+      
+           run_t.wifi_connect_flag =1 ;      
+      
+        }
+        else if(pdata[3] == 0x0){ //don't link wifi 
+      
+           run_t.wifi_connect_flag =0 ;     
+      
+         }
+        
+
+
+      break;
+
+     case 0x3A: // smart phone APP set temperature value 
+        
+      
+        run_t.wifi_set_temperature = pdata[3];
+
+        decade_temp =  run_t.wifi_set_temperature / 10 ;
+		unit_temp =  run_t.wifi_set_temperature % 10; //
+        
+		lcd_t.number1_low=decade_temp;
+		lcd_t.number1_high =decade_temp;
+
+		lcd_t.number2_low = unit_temp;
+		lcd_t.number2_high = unit_temp;
+
+        run_t.setup_temperature_value =1;
       break;
      
      }
@@ -203,8 +241,7 @@ void Receive_Wifi_Cmd(uint8_t cmd)
 
 		   case WIFI_POWER_ON: //turn on 
 		 	
-           
-              run_t.wifi_send_buzzer_sound = WIFI_POWER_ON_ITEM;
+         
 	         
 		      run_t.wifi_connect_flag =1;
 			  run_t.gPower_On = 1;
@@ -220,7 +257,7 @@ void Receive_Wifi_Cmd(uint8_t cmd)
 			 case WIFI_POWER_OFF: //turn off 
                 
 			   run_t.wifi_connect_flag =1;
-			   run_t.wifi_send_buzzer_sound = WIFI_POWER_OFF_ITEM;
+		
 				
 
       
@@ -413,7 +450,7 @@ void Setup_Timer_Times(void)
 	           if(run_t.timer_timing_define_flag == timing_success){
 			    run_t.timer_time_hours=0;
 				run_t.timer_time_minutes=0;
-				run_t.wifi_send_buzzer_sound=0xff;
+		
 				Power_Off_Fun();
 			
 
@@ -476,7 +513,7 @@ void Setup_Timer_Times_Donot_Display(void)
 	           if(run_t.timer_timing_define_flag == timing_success){
 			    run_t.timer_time_hours=0;
 				run_t.timer_time_minutes=0;
-				run_t.wifi_send_buzzer_sound=0xff;
+			
 				Power_Off_Fun();
 
 			

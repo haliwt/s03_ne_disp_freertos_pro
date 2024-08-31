@@ -91,14 +91,14 @@ typedef struct __RUN{
    uint8_t wifi_set_timing;
    uint8_t wifi_set_wind_speed;
    uint8_t setup_temperature_value ;
-   uint8_t wifi_send_buzzer_sound;
+   
 
    uint8_t wifi_led_fast_blink_flag ;
  
    uint8_t  setup_timer_timing_item;
    //wifi
    uint8_t  wifi_set_oneself_temperature;
-   uint8_t   wifi_set_temperature_value_flag;
+  
    uint8_t wifi_receive_led_fast_led_flag;
    uint8_t wifi_receive_power_on_flag;
    uint8_t wifi_receive_power_off_flag;
@@ -131,7 +131,7 @@ typedef struct __RUN{
    uint8_t display_set_timer_timing;
 
    
-   uint8_t temperature_set_flag;
+ 
 
    uint8_t gReal_humtemp[2];
    uint8_t gInputCmd[2];
@@ -141,7 +141,6 @@ typedef struct __RUN{
    //gTimer
  
    uint8_t gTimer_wifi_connect_counter;
-   uint8_t panel_key_setup_timer_flag;
  
 
    uint8_t gTimer_digital5678_ms;

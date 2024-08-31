@@ -38,29 +38,19 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		tm0=0;
 		
 		 gpro_t.gTimer_mode_key_long++;
+         gpro_t.gTimer_set_temp_times++;
+         gpro_t.gTimer_temp_copare_value++ ;
+         //
 		run_t.fan_off_60s++;
         run_t.gTimer_wifi_connect_counter++;
 		run_t.gTimer_disp_time_sencods++;
-		
-
-   
-        run_t.gTimer_key_timing++;
+		run_t.gTimer_key_timing++;
 		run_t.gTimer_disp_timer_seconds ++;
 		run_t.gTimer_ptc_fan_warning++;
-
-
-	  
-    
-         run_t.gTimer_timing++;
-	
-          run_t.gTimer_work_break_times++;
+        run_t.gTimer_timing++;
+	    run_t.gTimer_work_break_times++;
 		 
-		 }
-
-		
-		
-	   
-     
+	}
 
    }
  }
