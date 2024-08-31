@@ -19,9 +19,9 @@ static void donot_disp_T13_icon_fan_speed_level(void);
 void disp_temp_humidity_wifi_icon_handler(void)
 {
     
-     static uint8_t timer_timg_flag;
+     static uint8_t timer_timg_flag,decade_temp,unit_temp,temp1,temp2;
 
-     static uint8_t number_blink_times;
+     static uint8_t number_blink_times, disp_set_timer_value;
 	
 	 TIM1723_Write_Cmd(0x00);
 	 TIM1723_Write_Cmd(0x40);
@@ -30,6 +30,18 @@ void disp_temp_humidity_wifi_icon_handler(void)
    /***********************setup temperature value ********************************/
 	 //digital 1,2 ->display "temperature"  blink  
 	if(run_t.setup_temperature_value ==1){
+
+        disp_set_timer_value =1;
+
+        decade_temp = run_t.wifi_set_temperature / 10 ;
+		unit_temp =  run_t.wifi_set_temperature % 10; //
+        
+		lcd_t.number1_low=decade_temp;
+		lcd_t.number1_high =decade_temp;
+
+		lcd_t.number2_low = unit_temp;
+		lcd_t.number2_high = unit_temp;
+
 	     
 	 if(run_t.gTimer_numbers_one_two_blink < 6  ){ //disp number
 	     //display address 0xC2
@@ -112,6 +124,21 @@ void disp_temp_humidity_wifi_icon_handler(void)
         TIM1723_Write_Cmd(LUM_VALUE);//(0x9B);
 	 }
 	 else{ //digital "1,2" don't blink LED
+
+        if(disp_set_timer_value==1){
+
+            disp_set_timer_value++;
+          temp1 =   gpro_t.temp_real_value/ 10;
+          temp2   = gpro_t.temp_real_value% 10;
+
+           lcd_t.number1_low= temp1;
+		   lcd_t.number1_high =temp1;
+
+		   lcd_t.number2_low = temp2;
+	       lcd_t.number2_high = temp2;
+
+
+        }
 	    //display address 0xC2 ->
 	    Display_Kill_Dry_Ster_Icon();
 		
