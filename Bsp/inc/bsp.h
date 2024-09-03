@@ -10,6 +10,7 @@
 #include "bsp_key_app.h"
 #include "bsp_key.h"
 #include "bsp_lcd.h"
+#include "bsp_wifi.h"
 #include "bsp_lcd_app.h"
 #include "bsp_freertos.h"
 
@@ -67,7 +68,7 @@ void set_temperature_compare_value_fun(void);
 
 
 
-void disp_timer_time_and_fan_icon_handler(void);
+void display_timer_and_beijing_time_handler(void);
 
 
 #endif

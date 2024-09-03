@@ -308,9 +308,10 @@ static void vTaskRunPro(void *pvParameters)
 
             }
        set_temperature_compare_value_fun();
+            
        disp_temp_humidity_wifi_icon_handler();
 
-       disp_timer_time_and_fan_icon_handler();
+       display_timer_and_beijing_time_handler();
 
        disp_time_colon_ion_handler();
 

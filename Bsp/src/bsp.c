@@ -5,7 +5,7 @@ process_state gpro_t;
 
 static void  disp_set_timer_timing_value_fun(void);
 
-static void disp_normal_timing_and_fan_icon_handler(void);
+static void disp_normal_timing_handler(void);
 
 
 
@@ -13,6 +13,7 @@ static void disp_normal_timing_and_fan_icon_handler(void);
 void bsp_init(void)
 {
   Beijing_Time_Init();
+  bsp_wifi_init();
 
 }
 
@@ -33,13 +34,13 @@ void mode_key_long_fun(void)
 
 }
 
-void disp_timer_time_and_fan_icon_handler(void)
+void display_timer_and_beijing_time_handler(void)
 {
 
    switch(run_t.setup_timer_timing_item){
 
     case 0:
-      disp_normal_timing_and_fan_icon_handler();
+      disp_normal_timing_handler();
 
     break;
 
@@ -55,13 +56,13 @@ void disp_timer_time_and_fan_icon_handler(void)
 
 /******************************************************************************
 	*
-	*Function Name:void disp_normal_timing_and_fan_icon_handler(void)
+	*Function Name:void disp_normal_timing_handler(void)
 	*Function: display of icon , "1" -> ON ,"0"-> OFF
 	*Input Ref:NO
 	*Return Ref:NO
 	*
 ******************************************************************************/
-static void disp_normal_timing_and_fan_icon_handler(void)
+static void disp_normal_timing_handler(void)
 {
 
         if( run_t.ptc_too_hot_flag ==0){

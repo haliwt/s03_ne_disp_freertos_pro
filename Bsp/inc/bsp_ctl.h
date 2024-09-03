@@ -3,6 +3,9 @@
 #include "main.h"
 
 
+
+
+
 typedef enum WIFI_STATE_T{
    
     WIFI_POWER_ON = 0x80,
@@ -85,7 +88,7 @@ typedef struct __RUN{
    uint8_t single_data;
    uint8_t fan_off_60s;
 
-   uint8_t wifi_connect_flag;
+   uint8_t wifi_link_net_success;
 
    uint8_t wifi_set_temperature;
    uint8_t wifi_set_timing;
@@ -100,7 +103,7 @@ typedef struct __RUN{
    uint8_t  wifi_set_oneself_temperature;
   
    uint8_t wifi_receive_led_fast_led_flag;
-   uint8_t wifi_receive_power_on_flag;
+ 
    uint8_t wifi_receive_power_off_flag;
 
 
@@ -122,7 +125,7 @@ typedef struct __RUN{
   
 
    //works two houre after stop 10 minute
-   uint8_t works_counter_time_value;
+
    uint8_t gTimer_work_break_times;
    //beijing times
    uint8_t gmt_time_hours;
@@ -164,7 +167,7 @@ typedef struct __RUN{
     int8_t 	gTime_hours;
 
      uint8_t gTimer_ptc_fan_warning;
-	 uint16_t power_key_interrupt_counter;
+	
 	 uint16_t gTimer_ptc_fan_blink_warning;
      uint16_t gTimer_numbers_one_two_blink;
      uint32_t wifi_key_counter;
@@ -173,6 +176,8 @@ typedef struct __RUN{
  }RUN_T;
 
 extern RUN_T run_t;
+
+
 
 void Timing_Handler(void);
 
@@ -183,6 +188,7 @@ uint8_t bcc_check(const unsigned char *data, int len) ;
 
 
 void Setup_Timer_Times_Donot_Display(void);
+
 
 
 #endif 

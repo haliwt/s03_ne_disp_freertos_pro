@@ -2,7 +2,7 @@
 
 RUN_T run_t;
 
-static void Receive_Wifi_Cmd(uint8_t cmd);
+
 static void Setup_Timer_Times(void);
 //void Setup_Timer_Times_Donot_Display(void);
 static void Works_Counter_Time(void);
@@ -42,6 +42,18 @@ void receive_data_fromm_mainboard(uint8_t *pdata)
         }
 
      break;
+
+    case 0x21: //smart phone power on or off
+        if(pdata[3]==0x01){ //power on by smart phone APP
+            gpro_t.app_power_on_flag =1;
+             App_PowerOn_Handler() ; 
+        
+         }
+         else{  //power off by smart phone APP
+                 
+         }
+       
+     break; 
 
      case 0x02: //PTC打开关闭指令
 
@@ -90,22 +102,6 @@ void receive_data_fromm_mainboard(uint8_t *pdata)
 
      break;
 
-
-      case 0x05: // link wifi command
-
-        if(pdata[3] == 0x01){  // link wifi 
-
-             
-
-        }
-        else if(pdata[3] == 0x0){ //don't link wifi 
-
-
-
-        }
-
-
-     break;
 
       case 0x1A: //温度数据
 
@@ -163,6 +159,7 @@ void receive_data_fromm_mainboard(uint8_t *pdata)
             run_t.dispTime_hours  =  pdata[5];
             run_t.dispTime_minutes = pdata[6];
             run_t.gTimer_disp_time_sencods =  pdata[7];
+     
 
 
         }
@@ -200,22 +197,24 @@ void receive_data_fromm_mainboard(uint8_t *pdata)
 
       break;
 
-      case 0x1F: //link wifi if success .
+      case 0x1F: //link wifi if success data 
         
-      if(pdata[3] == 0x01){  // link wifi 
+      if(pdata[5] == 0x01){  // link wifi 
       
-           run_t.wifi_connect_flag =1 ;      
+           run_t.wifi_link_net_success =1 ;      
       
         }
-        else if(pdata[3] == 0x0){ //don't link wifi 
+        else if(pdata[5] == 0x0){ //don't link wifi 
       
-           run_t.wifi_connect_flag =0 ;     
+           run_t.wifi_link_net_success =0 ;     
       
          }
         
 
 
       break;
+
+     
 
      case 0x27 : //AI mode by smart phone of APP be control.
 
@@ -278,166 +277,7 @@ uint8_t bcc_check(const unsigned char *data, int len) {
 *Return Ref: NO
 *
 **********************************************************************/
-void Receive_Wifi_Cmd(uint8_t cmd)
-{
-	switch(cmd){
 
-
-		   case WIFI_POWER_ON: //turn on 
-		 	
-         
-	         
-		      run_t.wifi_connect_flag =1;
-			  run_t.gPower_On = 1;
-			  
-				run_t.gModel =1;
-				run_t.display_set_timer_timing=beijing_time ;
-	
-   
-			  cmd=0xff;
-
-	         break;
-
-			 case WIFI_POWER_OFF: //turn off 
-                
-			   run_t.wifi_connect_flag =1;
-		
-				
-
-      
-				
-              cmd=0xff;
-
-			 break;
-
-			case WIFI_MODE_1: //AI turn on -> AI icon display 
-                if(run_t.gPower_On==1){
-			
-					if(run_t.display_set_timer_timing == beijing_time){
-
-					//timer time + don't has ai item
-					run_t.display_set_timer_timing = timer_time;
-					run_t.gModel=0;
-
-					}
-					else if(run_t.display_set_timer_timing == timer_time){
-					//beijing time + ai item
-					run_t.display_set_timer_timing = beijing_time;
-
-					run_t.gModel=1;
-
-					}
-		    	}
-			break;
-
-			 case WIFI_MODE_2: //icon don't display 
-                 if(run_t.gPower_On==1){
-					  if(run_t.display_set_timer_timing == beijing_time){
-
-						//timer time + don't has ai item
-						run_t.display_set_timer_timing = timer_time;
-						run_t.gModel=0;
-
-						}
-						else if(run_t.display_set_timer_timing == timer_time){
-						//beijing time + ai item
-						run_t.display_set_timer_timing = beijing_time;
-
-						run_t.gModel=1;
-
-						}
-			 	   
-                 }
-             break;
-
-			 case WIFI_KILL_ON: //kill turn on plasma
-			  if(run_t.gPower_On==1){
-                    run_t.gPlasma = 1;
-			        run_t.gFan_RunContinue =0;
-                 // HAL_Delay(200);
-                } 
-			 break;
-
-			 case WIFI_KILL_OFF: //kill turn off
-                if(run_t.gPower_On==1){
-			 	  run_t.gPlasma =0;
-				  
-		          run_t.gFan_RunContinue =0;
-                   // HAL_Delay(200);
-                }
-			 break;
-
-			 case WIFI_PTC_ON://dry turn on
-                if(run_t.gPower_On==1){
-			        run_t.gDry =1;
-                    run_t.gFan_RunContinue =0;
-                   // HAL_Delay(200);
-                 
-                }
-			 break;
-
-			 case WIFI_PTC_OFF: //dry turn off
-               
-			 	if(run_t.gPower_On==1){
-					run_t.gDry=0;
-                 
-		            run_t.gFan_RunContinue =0;
-                    //HAL_Delay(200);
-			 	}
-
-			 break;
-
-			 case WIFI_SONIC_ON:  //drive bug
-		
-				 if(run_t.gPower_On==1){		   
-				  run_t.gUltransonic =1; //turn on 
-			
-				 run_t.gFan_RunContinue =0;
-                
-			    }
-
-			 break;
-
-			 case WIFI_SONIC_OFF: //drive bug turn off
-			 	if(run_t.gPower_On==1){
-				    run_t.gUltransonic=0;
-					run_t.gFan_RunContinue =0;
-                   
-			   }
-			 break;
-
-
-			 case PTC_ERROR:
-			 	
-			 	  run_t.gDry=0;
-				  run_t.ptc_too_hot_flag =1;
-			      run_t.ptc_warning =1;
-
-			 break;
-
-			 case FAN_ERROR:
-			 	
-			 	 run_t.ptc_too_hot_flag =1;
-			 	 run_t.disp_wind_speed_grade=0;
-	
-				 run_t.fan_warning =1;
-			 break;
-
-
-			 case FAN_REMOVE_ERROR:
-			 	 run_t.disp_wind_speed_grade=100;
-				 if( run_t.ptc_warning ==0)run_t.ptc_too_hot_flag =0;
-				 run_t.fan_warning =0;
-
-			 break;
-				default :
-                  cmd =0;
-			 break;
-
-			 
-        }
-   
-}
 
 
 /************************************************************************
@@ -510,7 +350,10 @@ void Setup_Timer_Times(void)
                      run_t.timer_time_minutes =0;
 				     run_t.display_set_timer_timing=beijing_time;
                      run_t.gModel=1;
-					 SendData_Set_Command(0x27,0x0); //MODE_AI_NO_BUZZER);
+                     if(wifi_link_net_state()==1){
+					      SendData_Set_Command(0x27,0x01); //MODE_AI,BUR NO_BUZZER);
+
+                      }
                  }
                             
                 
@@ -605,7 +448,7 @@ static void Works_Counter_Time(void)
 		if(run_t.dispTime_minutes > 59){
 			run_t.dispTime_minutes=0;
 			run_t.dispTime_hours ++;
-		    run_t.works_counter_time_value++;
+		    
 		if(run_t.dispTime_hours >24){
 			run_t.dispTime_hours=0;
 
