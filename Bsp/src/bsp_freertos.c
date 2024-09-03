@@ -58,7 +58,7 @@ typedef struct Msg
     uint8_t  long_key_mode_counter;
     uint8_t  key_long_mode_flag;
     //
-    uint8_t  long_key_power_counter;
+    uint32_t  long_key_power_counter;
     uint8_t  key_long_power_flag;
 	
 }MSG_T;
@@ -110,13 +110,13 @@ void freeRTOS_Handler(void)
 static void vTaskRunPro(void *pvParameters)
 {
     BaseType_t xResult;
-	const TickType_t xMaxBlockTime = pdMS_TO_TICKS(30); /* 设置朢�大等待时间为30ms */
+	const TickType_t xMaxBlockTime = pdMS_TO_TICKS(20); /* 设置朢�大等待时间为30ms */
 	uint32_t ulValue;
     
     static volatile uint8_t power_on_off_flag,fan_on_off_flag ;
     static uint8_t dry_on_off_flag,plasma_on_off_flag, ai_on_off_flag ;
     static uint8_t key_add_flag,key_dec_flag,key_mode_flag;
-    
+    static uint8_t dc_power_on_flag;
     while(1)
     {
 		/*
@@ -148,8 +148,11 @@ static void vTaskRunPro(void *pvParameters)
              
 			if((ulValue & POWER_KEY_0) != 0)
 			{
-        	  power_on_off_flag = 1;
-              gl_tMsg.long_key_mode_counter=0;
+        	    if( gl_tMsg.key_long_power_flag !=1 &&  gl_tMsg.key_long_power_flag !=2){
+                   power_on_off_flag = 1;
+             
+                 }
+                 gl_tMsg.long_key_power_counter=0;
               
             }
             else if((ulValue & MODE_KEY_1) != 0){
@@ -210,7 +213,8 @@ static void vTaskRunPro(void *pvParameters)
              gl_tMsg.key_long_power_flag=0;
              if(run_t.gPower_On == power_off){
 
-               run_t.gPower_On = power_on;
+                run_t.gPower_On = power_on;
+                gl_tMsg.long_key_power_counter =0;
                 SendData_PowerOnOff(1);
                 power_key_short_fun();
 
@@ -223,8 +227,11 @@ static void vTaskRunPro(void *pvParameters)
 
             }
             else if(gl_tMsg.key_long_power_flag ==1){
-                   power_on_off_flag=0;
+                   SendData_Buzzer();
+                   gl_tMsg.key_long_power_flag++;
                    power_key_long_fun();
+                   SendData_Set_Command(0x05,0x01); // link wifi of command .
+                   gpro_t.gTimer_mode_key_long=0;
 
             }
             else if( key_mode_flag == 1 &&  gl_tMsg.key_long_mode_flag !=1){
@@ -260,17 +267,21 @@ static void vTaskRunPro(void *pvParameters)
           
       if(run_t.gPower_On == power_on){
 
-         if( gpro_t.gTimer_mode_key_long > 1 && (gl_tMsg.key_long_mode_flag  ==1 ||gl_tMsg.key_long_power_flag ==1)){
+            if( gpro_t.gTimer_mode_key_long > 1 && (gl_tMsg.key_long_mode_flag  ==1 ||gl_tMsg.key_long_power_flag ==2)){
               gpro_t.gTimer_mode_key_long =0;
-              if(gl_tMsg.key_long_power_flag==1){
+//              if(gl_tMsg.key_long_power_flag==1){
+//
+//                gl_tMsg.key_long_power_flag++;
+//
+//               //  SendData_Set_Command(0x05,0x01); // link wifi of command .
+//              }
+                gl_tMsg.long_key_power_counter=0;
+                if(gl_tMsg.key_long_power_flag ==2){
 
-                gl_tMsg.key_long_power_flag++;
+                    gl_tMsg.key_long_power_flag++;
+                }
 
-                 SendData_Set_Command(0x05,0x01); // link wifi of command .
-              }
-              gl_tMsg.key_long_mode_flag ++;
-
-         }
+            }
        set_temperature_compare_value_fun();
        disp_temp_humidity_wifi_icon_handler();
 
@@ -303,7 +314,7 @@ static void vTaskDecoderPro(void *pvParameters)
 {
    // MSG_T *ptMsg;
 	BaseType_t xResult;
-	const TickType_t xMaxBlockTime = pdMS_TO_TICKS(300); /* 设置朢�大等待时间为30ms */
+	//const TickType_t xMaxBlockTime = pdMS_TO_TICKS(300); /* 设置朢�大等待时间为30ms */
     uint32_t ulValue;
 	
     while(1)
@@ -329,7 +340,7 @@ static void vTaskDecoderPro(void *pvParameters)
        	xResult = xTaskNotifyWait(0x00000000,      
 						          0xFFFFFFFF,      
 						          &ulValue,        /* 保存ulNotifiedValue到变量ulValue中 */
-						          portMAX_DELAY);  /* 最大允许延迟时间-等待时间 */
+						          portMAX_DELAY);  /* 最大允许延迟时间-等待时间-BLOCK */
 		
 		if( xResult == pdPASS )
 		{
@@ -371,22 +382,25 @@ static void vTaskStart(void *pvParameters)
 	while(1)
     {
       
-    if(KEY_POWER_GetValue()  ==KEY_DOWN){
+    if(KEY_POWER_GetValue()  ==KEY_DOWN &&  gl_tMsg.long_key_power_counter < 2965500){
 
-           gl_tMsg.long_key_power_counter ++ ;
+        while(KEY_POWER_GetValue()   == KEY_DOWN && gl_tMsg.long_key_power_counter < 2965500){
+         
+            gl_tMsg.long_key_power_counter++;
+            if(gl_tMsg.long_key_power_counter > 2950000){
+                gl_tMsg.long_key_power_counter = 2965900;
+            if(run_t.gPower_On == power_on){  //WT.DEDIT 2024.08.26
+                gl_tMsg.key_long_power_flag =1;
+            }
 
-          if(gl_tMsg.long_key_power_counter > 90  && run_t.gPower_On == power_on){
-             gl_tMsg.long_key_power_counter=0;   
-               gl_tMsg.key_long_power_flag =1;
-               gpro_t.gTimer_mode_key_long = 0;
-            
-                SendData_Buzzer();
-           }
+            }
+         }
 
-         xTaskNotify(xHandleTaskRunPro, /* 目标任务 */
+        if(gl_tMsg.long_key_power_counter <  2950000 ){
+          xTaskNotify(xHandleTaskRunPro, /* 目标任务 */
                         POWER_KEY_0,            /* 设置目标任务事件标志位bit0  */
                          eSetBits);          /* 将目标任务的事件标志位与BIT_0进行或操作，  将结果赋值给事件标志位��1�7*/
-
+         }
              
 
      }
@@ -406,6 +420,9 @@ static void vTaskStart(void *pvParameters)
 
 
           }
+
+
+          
 
           xTaskNotify(xHandleTaskRunPro, /* 目标任务 */
                          MODE_KEY_1,            /* 设置目标任务事件标志位bit0  */

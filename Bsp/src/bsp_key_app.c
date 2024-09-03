@@ -192,18 +192,12 @@ void power_key_short_fun(void)
 void power_key_long_fun(void)
 {
     
-   
-
-    run_t.wifi_connect_flag =0;
+   run_t.wifi_connect_flag =0;
     run_t.gTimer_wifi_connect_counter=0;
   
     run_t.wifi_receive_led_fast_led_flag=0; //adjust if mainboard receive of connect wifi of signal
     run_t.wifi_led_fast_blink_flag=1;
   
-   
-    //HAL_Delay(2);
-
-
 }
 
 void mode_key_short_fun(void)
@@ -214,8 +208,8 @@ void mode_key_short_fun(void)
                //timer time + don't has ai item
                run_t.display_set_timer_timing = timer_time;
 			   run_t.gModel=2;
-		      //SendData_Set_Wifi(MODE_TIMER);
-			  HAL_Delay(1);
+		 
+		
                
 		   	}
 		    else if(run_t.display_set_timer_timing == timer_time){
@@ -223,8 +217,8 @@ void mode_key_short_fun(void)
                 run_t.display_set_timer_timing = beijing_time;
              
 	           run_t.gModel=1;
-			 // SendData_Set_Wifi(MODE_AI);
-			  HAL_Delay(1);
+			
+			
 				
 			}
 			
