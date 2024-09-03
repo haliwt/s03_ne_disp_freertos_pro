@@ -6,10 +6,13 @@
 #include "cmsis_os.h"
 
 
-#define POWER_KEY_0	        (1 << 0)
+#define POWER_KEY_BIT_0	        (1 << 0)
 #define MODE_KEY_1	        (1 << 1)
 #define DEC_KEY_2           (1 << 2)
 #define ADD_KEY_3           (1 << 3)
+
+#define POWER_OFF_BIT_4        (1 << 4)
+#define POWER_ON_BIT_5         (1<< 5)
 
 
 
@@ -146,7 +149,7 @@ static void vTaskRunPro(void *pvParameters)
 		{
 			/* 接收到消息，棢�测那个位被按丄1�7 */
              
-			if((ulValue & POWER_KEY_0) != 0)
+			if((ulValue & POWER_KEY_BIT_0) != 0)
 			{
         	    if( gl_tMsg.key_long_power_flag !=1 &&  gl_tMsg.key_long_power_flag !=2){
                    power_on_off_flag = 1;
@@ -269,12 +272,7 @@ static void vTaskRunPro(void *pvParameters)
 
             if( gpro_t.gTimer_mode_key_long > 1 && (gl_tMsg.key_long_mode_flag  ==1 ||gl_tMsg.key_long_power_flag ==2)){
               gpro_t.gTimer_mode_key_long =0;
-//              if(gl_tMsg.key_long_power_flag==1){
-//
-//                gl_tMsg.key_long_power_flag++;
-//
-//               //  SendData_Set_Command(0x05,0x01); // link wifi of command .
-//              }
+
                 gl_tMsg.long_key_power_counter=0;
                 if(gl_tMsg.key_long_power_flag ==2){
 
@@ -353,9 +351,7 @@ static void vTaskDecoderPro(void *pvParameters)
 
              check_code =  bcc_check(gl_tMsg.usData,ulid);
 
-           
-
-               if(check_code == bcc_check_code ){
+             if(check_code == bcc_check_code ){
            
                 receive_data_fromm_mainboard(gl_tMsg.usData);
                 }
@@ -398,7 +394,7 @@ static void vTaskStart(void *pvParameters)
 
         if(gl_tMsg.long_key_power_counter <  2950000 ){
           xTaskNotify(xHandleTaskRunPro, /* 目标任务 */
-                        POWER_KEY_0,            /* 设置目标任务事件标志位bit0  */
+                        POWER_KEY_BIT_0,            /* 设置目标任务事件标志位bit0  */
                          eSetBits);          /* 将目标任务的事件标志位与BIT_0进行或操作，  将结果赋值给事件标志位��1�7*/
          }
              
@@ -648,6 +644,25 @@ void USART1_Cmd_Error_Handler(void)
  }
 
 #endif 
+
+
+/****************************************************************************
+ * 
+ * Function Name: void App_PowerOnOff_Handler(void)
+ * Function:
+ * Input Ref: NO
+ * Return Ref: NO
+ * 
+*****************************************************************************/
+void App_PowerOnOff_Handler(void)
+{
+     
+     xTaskNotify(xHandleTaskRunPro, /* 目标任务 */
+	 POWER_KEY_BIT_0 ,            /* 设置目标任务事件标志位bit0  */
+	 eSetBits);             /* 将目标任务的事件标志位与BIT_0进行或操作，  将结果赋值给事件标志位。*/
+     
+
+}
 
 
 

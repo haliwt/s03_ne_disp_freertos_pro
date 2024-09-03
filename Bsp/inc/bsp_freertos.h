@@ -7,6 +7,7 @@
 void freeRTOS_Handler(void);
 
 
+void App_PowerOnOff_Handler(void);
 
 #endif 
 

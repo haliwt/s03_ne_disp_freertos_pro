@@ -31,11 +31,12 @@ void receive_data_fromm_mainboard(uint8_t *pdata)
      case 0x01: //表示开机指令
 
         if(pdata[3] == 0x01){ //open
-
+            App_PowerOnOff_Handler() ; 
 
         }
         else if(pdata[3] == 0x0){ //close 
 
+            App_PowerOnOff_Handler() ; 
 
 
         }
@@ -76,11 +77,11 @@ void receive_data_fromm_mainboard(uint8_t *pdata)
 
       case 0x04: //ultrasonic  打开关闭指令
 
-        if(pdata[2] == 0x01){  //open 
+        if(pdata[3] == 0x01){  //open 
             run_t.gUltransonic=1;
 
         }
-        else if(pdata[2] == 0x0){ //close 
+        else if(pdata[3] == 0x0){ //close 
 
           run_t.gUltransonic=0;
 
@@ -195,8 +196,8 @@ void receive_data_fromm_mainboard(uint8_t *pdata)
 
      case 0x3A: // smart phone APP set temperature value 
         
-      
-        run_t.wifi_set_temperature = pdata[3];
+        if(pdata[4] == 0x01){  // link wifi 
+        run_t.wifi_set_temperature = pdata[5];
 
         decade_temp =  run_t.wifi_set_temperature / 10 ;
 		unit_temp =  run_t.wifi_set_temperature % 10; //
@@ -208,6 +209,8 @@ void receive_data_fromm_mainboard(uint8_t *pdata)
 		lcd_t.number2_high = unit_temp;
 
         run_t.setup_temperature_value =1;
+
+        }
       break;
      
      }
