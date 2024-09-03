@@ -31,12 +31,12 @@ void receive_data_fromm_mainboard(uint8_t *pdata)
      case 0x01: //表示开机指令
 
         if(pdata[3] == 0x01){ //open
-            App_PowerOnOff_Handler() ; 
+            App_PowerOn_Handler() ; 
 
         }
         else if(pdata[3] == 0x0){ //close 
 
-            App_PowerOnOff_Handler() ; 
+            App_PowerOff_Handler() ; 
 
 
         }
@@ -177,6 +177,29 @@ void receive_data_fromm_mainboard(uint8_t *pdata)
         }
       break;
 
+
+      case 0x1E: //fan of speed is value 
+
+          if(pdata[5] < 34){
+            
+            run_t.disp_wind_speed_grade = 10;
+
+
+          }
+          else if(pdata[5] < 67 && pdata[5] > 33){
+
+            run_t.disp_wind_speed_grade = 60;
+
+          }
+          else if(pdata[5] > 66){
+
+             run_t.disp_wind_speed_grade =100;
+          }
+
+
+
+      break;
+
       case 0x1F: //link wifi if success .
         
       if(pdata[3] == 0x01){  // link wifi 
@@ -196,7 +219,7 @@ void receive_data_fromm_mainboard(uint8_t *pdata)
 
      case 0x3A: // smart phone APP set temperature value 
         
-        if(pdata[4] == 0x01){  // link wifi 
+        
         run_t.wifi_set_temperature = pdata[5];
 
         decade_temp =  run_t.wifi_set_temperature / 10 ;
@@ -210,7 +233,7 @@ void receive_data_fromm_mainboard(uint8_t *pdata)
 
         run_t.setup_temperature_value =1;
 
-        }
+        
       break;
      
      }

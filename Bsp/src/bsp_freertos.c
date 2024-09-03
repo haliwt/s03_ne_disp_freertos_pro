@@ -119,7 +119,7 @@ static void vTaskRunPro(void *pvParameters)
     static volatile uint8_t power_on_off_flag,fan_on_off_flag ;
     static uint8_t dry_on_off_flag,plasma_on_off_flag, ai_on_off_flag ;
     static uint8_t key_add_flag,key_dec_flag,key_mode_flag;
-    static uint8_t dc_power_on_flag;
+    static uint8_t dc_power_on_flag,app_power_on_flag,app_power_off_flag;
     while(1)
     {
 		/*
@@ -148,6 +148,29 @@ static void vTaskRunPro(void *pvParameters)
 		if( xResult == pdPASS )
 		{
 			/* 接收到消息，棢�测那个位被按丄1�7 */
+
+
+
+
+            if((ulValue & DECODER_BIT_9) != 0)
+			{
+        	 
+              
+                gpro_t.disp_rx_cmd_done_flag = 0;
+
+             check_code =  bcc_check(gl_tMsg.usData,ulid);
+
+             if(check_code == bcc_check_code ){
+           
+                receive_data_fromm_mainboard(gl_tMsg.usData);
+                }
+
+
+
+            }
+
+
+            
              
 			if((ulValue & POWER_KEY_BIT_0) != 0)
 			{
@@ -157,6 +180,16 @@ static void vTaskRunPro(void *pvParameters)
                  }
                  gl_tMsg.long_key_power_counter=0;
               
+            }
+            else if((ulValue & POWER_ON_BIT_5) != 0){
+
+                    app_power_on_flag=1;
+
+            }
+             else if((ulValue & POWER_OFF_BIT_4) != 0){
+
+                    app_power_off_flag =1;
+
             }
             else if((ulValue & MODE_KEY_1) != 0){
                 gl_tMsg.long_key_power_counter =0;
@@ -183,26 +216,7 @@ static void vTaskRunPro(void *pvParameters)
               
            
             }
-            #if 1
-             if((ulValue & DECODER_BIT_9) != 0)
-               {
-                
-                 
-               gpro_t.disp_rx_cmd_done_flag = 0;
-    
-                check_code =  bcc_check(gl_tMsg.usData,ulid);
-    
-              
-    
-                  if(check_code == bcc_check_code ){
-              
-                   receive_data_fromm_mainboard(gl_tMsg.usData);
-                   }
-    
-    
-    
-               }
-            #endif 
+           
           
           
 
@@ -228,6 +242,19 @@ static void vTaskRunPro(void *pvParameters)
 
               }
 
+            }
+            else if(app_power_on_flag ==1){
+                app_power_on_flag++;
+                 run_t.gPower_On = power_on;
+                gl_tMsg.long_key_power_counter =0;
+                
+                power_key_short_fun();
+
+            }
+            else if(app_power_off_flag ==1){
+                app_power_off_flag++;
+
+                run_t.gPower_On = power_off;
             }
             else if(gl_tMsg.key_long_power_flag ==1){
                    SendData_Buzzer();
@@ -295,77 +322,12 @@ static void vTaskRunPro(void *pvParameters)
           power_off_handler();
 
        }
-     // USART1_Cmd_Error_Handler();
+      //USART1_Cmd_Error_Handler();
 
     }
 
    }
 }
-/**********************************************************************************************************
-*	凄1�71ￄ1�77 敄1�71ￄ1�77 各1�71ￄ1�77: vTaskStart
-*	功能说明: 启动任务，也就是朢�高优先级任务，这里用作按键扫描�ￄ1�71ￄ1�77
-*	彄1�71ￄ1�77    叄1�71ￄ1�77: pvParameters 是在创建该任务时传��的形参
-*	迄1�71ￄ1�77 囄1�71ￄ1�77 倄1�71ￄ1�77: 旄1�71ￄ1�77
-*   伄1�71ￄ1�77 兄1�71ￄ1�77 纄1�71ￄ1�77: 4  (数��越小优先级越低，这个跟uCOS相反)
-**********************************************************************************************************/
-static void vTaskDecoderPro(void *pvParameters)
-{
-   // MSG_T *ptMsg;
-	BaseType_t xResult;
-	//const TickType_t xMaxBlockTime = pdMS_TO_TICKS(300); /* 设置朢�大等待时间为30ms */
-    uint32_t ulValue;
-	
-    while(1)
-    {
-	   #if 0
-       xResult = xQueueReceive(xQueue2,                   /* 消息队列句柄 */
-		                        (void *)&ptMsg,  		   /* 这里获取的是结构体的地址 */
-		                        (TickType_t)xMaxBlockTime);/* 设置阻塞时间 */
-		
-		if(xResult == pdPASS){
-            
-          ulid = ptMsg ->ucMessageID;
-
-        //  usdata = ptMsg->usData[0];
-
-         // uldata = ptMsg->ulData[0];
-          
-           receive_data_fromm_mainboard(ptMsg->usData,ulid);
-         }
-
-       #endif 
-
-       	xResult = xTaskNotifyWait(0x00000000,      
-						          0xFFFFFFFF,      
-						          &ulValue,        /* 保存ulNotifiedValue到变量ulValue中 */
-						          portMAX_DELAY);  /* 最大允许延迟时间-等待时间-BLOCK */
-		
-		if( xResult == pdPASS )
-		{
-
-            if((ulValue & DECODER_BIT_9) != 0)
-			{
-        	 
-              
-            gpro_t.disp_rx_cmd_done_flag = 0;
-
-             check_code =  bcc_check(gl_tMsg.usData,ulid);
-
-             if(check_code == bcc_check_code ){
-           
-                receive_data_fromm_mainboard(gl_tMsg.usData);
-                }
-
-
-
-            }
-
-
-       }
-      
-    }
-}
-
 /**********************************************************************************************************
 *	凄1�71ￄ1�77 敄1�71ￄ1�77 各1�71ￄ1�77: vTaskStart
 *	功能说明: 消息处理，使用函数comGetChar获取串口命令，使用函数comSendBuf发��串口消恄1�71ￄ1�77
@@ -461,7 +423,7 @@ void AppTaskCreate (void)
 
 	xTaskCreate( vTaskRunPro,    		/* 任务函数  */
                  "vTaskRunPro",  		/* 任务各1�71ￄ1�77    */
-                 128,         		/* stack大小，单位word，也就是4字节 */
+                 256,         		/* stack大小，单位word，也就是4字节 */
                  NULL,        		/* 任务参数  */
                  1,           		/* 任务优先纄1�71ￄ1�77 数��越小优先级越低，这个跟uCOS相反 */
                  &xHandleTaskRunPro); /* 任务句柄  */
@@ -555,7 +517,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
     if(huart==&huart1) // Motor Board receive data (filter)
 	{
 
-       DISABLE_INT();
+    //   DISABLE_INT();
        switch(state)
 		{
 		case 0:  //#0
@@ -619,7 +581,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 
 			
 		}
-        ENABLE_INT();
+     //   ENABLE_INT();
        __HAL_UART_CLEAR_OREFLAG(&huart1);
 		HAL_UART_Receive_IT(&huart1,inputBuf,1);//UART receive data interrupt 1 byte
 	}
@@ -654,7 +616,17 @@ void USART1_Cmd_Error_Handler(void)
  * Return Ref: NO
  * 
 *****************************************************************************/
-void App_PowerOnOff_Handler(void)
+void App_PowerOff_Handler(void)
+{
+     
+     xTaskNotify(xHandleTaskRunPro, /* 目标任务 */
+	 POWER_OFF_BIT_4 ,            /* 设置目标任务事件标志位bit0  */
+	 eSetBits);             /* 将目标任务的事件标志位与BIT_0进行或操作，  将结果赋值给事件标志位。*/
+     
+
+}
+
+void App_PowerOn_Handler(void)
 {
      
      xTaskNotify(xHandleTaskRunPro, /* 目标任务 */
@@ -663,6 +635,7 @@ void App_PowerOnOff_Handler(void)
      
 
 }
+
 
 
 
