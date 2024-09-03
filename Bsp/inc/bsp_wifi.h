@@ -3,7 +3,7 @@
 #include "main.h"
 
 
-extern uint_t (*wifi_link_net_state)(void);
+extern uint8_t (*wifi_link_net_state)(void);
 
 void bsp_wifi_init(void);
 

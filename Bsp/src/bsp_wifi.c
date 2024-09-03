@@ -1,6 +1,6 @@
 #include "bsp.h"
 
-uint_t (*wifi_link_net_state)(void);
+uint8_t (*wifi_link_net_state)(void);
 
 
 static uint8_t wifi_link_net_state_default(void);
