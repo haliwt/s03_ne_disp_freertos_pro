@@ -217,6 +217,24 @@ void receive_data_fromm_mainboard(uint8_t *pdata)
 
       break;
 
+     case 0x27 : //AI mode by smart phone of APP be control.
+
+        if(pdata[3]==2){
+         //timer time + don't has ai item
+              run_t.display_set_timer_timing = timer_time;
+    	      run_t.gModel=2;
+         }
+         else{
+                  //beijing time + ai item
+              run_t.display_set_timer_timing = beijing_time;
+             
+	          run_t.gModel=1;
+
+         }
+
+
+     break;
+
      case 0x3A: // smart phone APP set temperature value 
         
         
