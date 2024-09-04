@@ -275,6 +275,7 @@ static void vTaskRunPro(void *pvParameters)
                  key_mode_flag ++;
                  gl_tMsg.long_key_mode_counter=0;
                  SendData_Buzzer();
+                 osDelay(5);
                  mode_key_short_fun();
              }
              else if(gl_tMsg.key_long_mode_flag ==1 ){

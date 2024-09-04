@@ -182,10 +182,7 @@ static void disp_set_timer_timing_value_fun(void)
       }
                 
                 
-   
-
-   
-      TIM1723_Write_Cmd(LUM_VALUE);//(0x97);//(0x94);//(0x9B);
+    TIM1723_Write_Cmd(LUM_VALUE);//(0x97);//(0x94);//(0x9B);
 
  }
 /**************************************************************************************************
