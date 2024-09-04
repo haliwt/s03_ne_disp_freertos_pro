@@ -95,9 +95,30 @@ static void disp_normal_timing_handler(void)
 static void disp_set_timer_timing_value_fun(void)
 {
   
-   
+     static uint8_t tim_bit_1_hours,tim_bit_2_hours;
 
       if(run_t.gTimer_key_timing < 4){
+
+            tim_bit_2_hours = run_t.timer_time_hours /10 ;
+			tim_bit_1_hours = run_t.timer_time_hours %10;
+           // HAL_Delay(20);
+			run_t.timer_time_minutes  =0;
+
+			
+            
+			lcd_t.number5_low=tim_bit_2_hours;
+			lcd_t.number5_high =tim_bit_2_hours;
+
+			lcd_t.number6_low = tim_bit_1_hours;
+			lcd_t.number6_high = tim_bit_1_hours;
+
+			lcd_t.number7_low=0;
+			lcd_t.number7_high =0;
+
+			lcd_t.number8_low = 0;
+			lcd_t.number8_high = 0;
+
+       
     
       if(run_t.gTimer_digital5678_ms < 3){
                  TM1723_Write_Display_Data(0xC9,(0x01+lcdNumber4_Low[lcd_t.number4_low]+lcdNumber5_High[lcd_t.number5_high]) & 0xff);//display digital '4,5'

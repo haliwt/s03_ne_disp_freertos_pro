@@ -226,7 +226,7 @@ void mode_key_short_fun(void)
 void add_key_fun(void)
 {
      static uint8_t power_on_fisrt_flag ;
-     static uint8_t temp_bit_1_hours,temp_bit_2_hours,temp_bit_1_minute,temp_bit_2_minute;
+   //  static uint8_t temp_bit_1_hours,temp_bit_2_hours,temp_bit_1_minute,temp_bit_2_minute;
     
 		
 	 SendData_Buzzer();
@@ -279,6 +279,7 @@ void add_key_fun(void)
 
 			}
 		
+        #if 0
           
 			temp_bit_2_hours = run_t.timer_time_hours /10 ;
 			temp_bit_1_hours = run_t.timer_time_hours %10;
@@ -299,7 +300,7 @@ void add_key_fun(void)
 
 			lcd_t.number8_low = temp_bit_1_minute;
 			lcd_t.number8_high = temp_bit_1_minute;
-
+      #endif 
 
 		break;
 		}	
@@ -311,7 +312,7 @@ void add_key_fun(void)
 void dec_key_fun(void)
 {
     static uint8_t power_on_fisrt_flag;
-      static uint8_t temp_bit_1_hours,temp_bit_2_hours,temp_bit_1_minute,temp_bit_2_minute;
+   //   static uint8_t temp_bit_1_hours,temp_bit_2_hours,temp_bit_1_minute,temp_bit_2_minute;
     if(run_t.gPower_On ==1){
 	   	if(run_t.ptc_warning ==0){
 	   	SendData_Buzzer();
@@ -360,8 +361,10 @@ void dec_key_fun(void)
 					
 					
 				}
-				   // temp_bit_2_minute = run_t.timer_time_hours /10 ;
-					//temp_bit_1_minute = run_t.timer_time_hours %10;
+                
+          #if 0
+				    temp_bit_2_minute = run_t.timer_time_hours /10 ;
+					temp_bit_1_minute = run_t.timer_time_hours %10;
                
 					temp_bit_2_hours = run_t.timer_time_hours /10 ;
 					temp_bit_1_hours = run_t.timer_time_hours  %10;
@@ -384,7 +387,7 @@ void dec_key_fun(void)
 					lcd_t.number8_low = temp_bit_1_minute;
 					lcd_t.number8_high = temp_bit_1_minute;
                  
-
+             #endif 
              break;
 
 	    	}
