@@ -279,7 +279,9 @@ static void vTaskRunPro(void *pvParameters)
              }
              else if(gl_tMsg.key_long_mode_flag ==1 ){
                  key_mode_flag =0;
+                 gl_tMsg.key_long_mode_flag++;
                  mode_key_long_fun();
+                 gpro_t.gTimer_mode_key_long =0;
                 
                 
 
@@ -304,7 +306,7 @@ static void vTaskRunPro(void *pvParameters)
           
       if(run_t.gPower_On == power_on){
 
-            if( gpro_t.gTimer_mode_key_long > 1 && (gl_tMsg.key_long_mode_flag  ==1 ||gl_tMsg.key_long_power_flag ==2)){
+            if( gpro_t.gTimer_mode_key_long > 1 && (gl_tMsg.key_long_mode_flag  ==2 ||gl_tMsg.key_long_power_flag ==2)){
               gpro_t.gTimer_mode_key_long =0;
 
                 gl_tMsg.long_key_power_counter=0;
@@ -312,6 +314,7 @@ static void vTaskRunPro(void *pvParameters)
 
                     gl_tMsg.key_long_power_flag++;
                 }
+                if(gl_tMsg.key_long_mode_flag==2)gl_tMsg.key_long_mode_flag++;
 
             }
        set_temperature_compare_value_fun();
