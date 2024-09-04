@@ -95,9 +95,9 @@ static void disp_normal_timing_handler(void)
 static void disp_set_timer_timing_value_fun(void)
 {
   
-       static uint8_t  timer_timg_flag;
-      //Humidity Icon "0xC9"-numbers "4-4B,4G,4C","5-5A,5F,5E,5D"
-        //digital -> 5,6,7,8 blink .
+   
+
+      if(run_t.gTimer_key_timing < 4){
     
       if(run_t.gTimer_digital5678_ms < 3){
                  TM1723_Write_Display_Data(0xC9,(0x01+lcdNumber4_Low[lcd_t.number4_low]+lcdNumber5_High[lcd_t.number5_high]) & 0xff);//display digital '4,5'
@@ -136,34 +136,34 @@ static void disp_set_timer_timing_value_fun(void)
        }
              
        if(run_t.gTimer_digital5678_ms > 3){ //4
-                run_t.gTimer_digital5678_ms=0;
-                 timer_timg_flag++;
-            
-    
-              if(run_t.gTimer_key_timing > 3){ //4
-    
-                    
-                    run_t.timer_time_minutes = 0;
-                    
-                    run_t.gTimer_timing=0;
-                if(run_t.timer_time_hours !=0){  
+           run_t.gTimer_digital5678_ms=0;
+               
+
+        }
+
+       }
+       else{ //4
+              run_t.setup_timer_timing_item=0;//run_t.gModel =2;
+              run_t.timer_time_minutes = 0;
+              run_t.gTimer_timing=0;
+               if(run_t.timer_time_hours !=0){  
                       run_t.timer_timing_define_flag = timing_success;
-                      run_t.setup_timer_flag = 1;
+                     
                 }
-                  run_t.setup_timer_timing_item=0;
+         
     
-    
-              }
+      }
                 
                 
-             }
-      //open display
+   
+
+   
       TIM1723_Write_Cmd(LUM_VALUE);//(0x97);//(0x94);//(0x9B);
 
  }
 /**************************************************************************************************
 *
-*Function Name:void static disp_set_timer_timing_value_fun(void)
+*Function Name:void set_temperature_compare_value_fun(void)
 *
 *
 *

@@ -24,25 +24,25 @@
 											函数声明
 ***********************************************************************************************************/
 static void vTaskRunPro(void *pvParameters);
-static void vTaskDecoderPro(void *pvParameters);
+//static void vTaskDecoderPro(void *pvParameters);
 static void vTaskStart(void *pvParameters);
 static void AppTaskCreate (void);
 
 
 
 /* 创建任务通信机制 */
-static void AppObjCreate(void);
+//static void AppObjCreate(void);
 
 
 /***********************************************************************************************************
 											变量声明
 ***********************************************************************************************************/
 static TaskHandle_t xHandleTaskRunPro = NULL;
-static TaskHandle_t xHandleTaskDecoderPro= NULL;
+//static TaskHandle_t xHandleTaskDecoderPro= NULL;
 static TaskHandle_t xHandleTaskStart = NULL;
 
 //static QueueHandle_t xQueue1 = NULL;
-static QueueHandle_t xQueue2 = NULL;
+//static QueueHandle_t xQueue2 = NULL;
 //static QueueHandle_t xQueue3 = NULL;
 
 
@@ -117,9 +117,9 @@ static void vTaskRunPro(void *pvParameters)
 	uint32_t ulValue;
     
     static volatile uint8_t power_on_off_flag,fan_on_off_flag ;
-    static uint8_t dry_on_off_flag,plasma_on_off_flag, ai_on_off_flag ;
-    static uint8_t key_add_flag,key_dec_flag,key_mode_flag;
-    static uint8_t dc_power_on_flag,app_power_on_flag,app_power_off_flag;
+   
+    static uint8_t key_add_flag,key_dec_flag,key_mode_flag,dc_power_on;
+    static uint8_t app_power_on_flag,app_power_off_flag;
     while(1)
     {
 		/*
@@ -174,7 +174,13 @@ static void vTaskRunPro(void *pvParameters)
              
 			if((ulValue & POWER_KEY_BIT_0) != 0)
 			{
-        	    if( gl_tMsg.key_long_power_flag !=1 &&  gl_tMsg.key_long_power_flag !=2){
+
+                if(dc_power_on == 0){
+
+                    dc_power_on++;
+                    run_t.gPower_On = power_off;
+                 }
+                 else if( gl_tMsg.key_long_power_flag !=1 &&  gl_tMsg.key_long_power_flag !=2){
                    power_on_off_flag = 1;
              
                  }
@@ -232,6 +238,7 @@ static void vTaskRunPro(void *pvParameters)
 
                 run_t.gPower_On = power_on;
                 gl_tMsg.long_key_power_counter =0;
+               
                 SendData_PowerOnOff(1);
                 power_key_short_fun();
 
@@ -369,7 +376,7 @@ static void vTaskStart(void *pvParameters)
 
           gl_tMsg.long_key_mode_counter ++ ;
 
-          if(gl_tMsg.long_key_mode_counter > 90  && run_t.gPower_On == power_on){
+          if(gl_tMsg.long_key_mode_counter > 60  && run_t.gPower_On == power_on){
              gl_tMsg.long_key_mode_counter=0;   
                gl_tMsg.key_long_mode_flag =1;
                gpro_t.gTimer_mode_key_long = 0;
@@ -510,9 +517,9 @@ void AppObjCreate (void)
 *******************************************************************************/
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-     static uint8_t state, rx_mb_data_tag;
+     static uint8_t state;
      BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-     MSG_T *ptMsg;
+    
 
 
     if(huart==&huart1) // Motor Board receive data (filter)

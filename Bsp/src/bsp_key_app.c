@@ -24,7 +24,7 @@ void (*sendAi_usart_fun)(uint8_t senddat);
 void (*beijing_time_fun)(void);
 
 
-static void Works_Counter_Time(void);
+
 
 static void Beijing_Time_Display(void);
 
@@ -129,6 +129,7 @@ void power_key_short_fun(void)
     run_t.disp_wind_speed_grade =100;
 	
 
+     run_t.setup_timer_timing_item=0;
 
 	
      run_t.gTimer_timing=0;

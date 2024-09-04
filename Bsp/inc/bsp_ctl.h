@@ -121,7 +121,7 @@ typedef struct __RUN{
 
    uint8_t gPower_repeat_times_flag;
    //timer 
-   uint8_t setup_timer_flag;
+  
   
 
    //works two houre after stop 10 minute
