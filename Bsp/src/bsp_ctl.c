@@ -46,11 +46,13 @@ void receive_data_fromm_mainboard(uint8_t *pdata)
     case 0x21: //smart phone power on or off
         if(pdata[3]==0x01){ //power on by smart phone APP
             gpro_t.app_power_on_flag =1;
+            run_t.wifi_link_net_success=1;
+             
              App_PowerOn_Handler() ; 
         
          }
          else{  //power off by smart phone APP
-                 
+             App_PowerOff_Handler() ;     
          }
        
      break; 
@@ -60,10 +62,11 @@ void receive_data_fromm_mainboard(uint8_t *pdata)
      if(pdata[3] == 0x01){
 
             run_t.gDry =1 ;//&& run_t.gPlasma ==1  && run_t.gUltransonic==1
+            run_t.wifi_link_net_success=1;
         }
         else if(pdata[3] == 0x0){
 
-
+            run_t.wifi_link_net_success=1;
             run_t.gDry =0;
 
         }
@@ -73,12 +76,13 @@ void receive_data_fromm_mainboard(uint8_t *pdata)
      case 0x03: //PLASMA 打开关闭指令
 
         if(pdata[3] == 0x01){
+            run_t.wifi_link_net_success=1;
         run_t.gPlasma =1;
 
 
         }
         else if(pdata[3] == 0x0){
-
+           run_t.wifi_link_net_success=1;
          run_t.gPlasma =0;
 
         }
@@ -90,11 +94,12 @@ void receive_data_fromm_mainboard(uint8_t *pdata)
       case 0x04: //ultrasonic  打开关闭指令
 
         if(pdata[3] == 0x01){  //open 
+            run_t.wifi_link_net_success=1;
             run_t.gUltransonic=1;
 
         }
         else if(pdata[3] == 0x0){ //close 
-
+          run_t.wifi_link_net_success=1;
           run_t.gUltransonic=0;
 
         }
@@ -178,18 +183,18 @@ void receive_data_fromm_mainboard(uint8_t *pdata)
       case 0x1E: //fan of speed is value 
 
           if(pdata[5] < 34){
-            
+            run_t.wifi_link_net_success=1;
             run_t.disp_wind_speed_grade = 10;
 
 
           }
           else if(pdata[5] < 67 && pdata[5] > 33){
-
+            run_t.wifi_link_net_success=1;
             run_t.disp_wind_speed_grade = 60;
 
           }
           else if(pdata[5] > 66){
-
+            run_t.wifi_link_net_success=1;
              run_t.disp_wind_speed_grade =100;
           }
 
@@ -214,9 +219,7 @@ void receive_data_fromm_mainboard(uint8_t *pdata)
 
       break;
 
-     
-
-     case 0x27 : //AI mode by smart phone of APP be control.
+    case 0x27 : //AI mode by smart phone of APP be control.
 
         if(pdata[3]==2){
          //timer time + don't has ai item
@@ -236,7 +239,7 @@ void receive_data_fromm_mainboard(uint8_t *pdata)
 
      case 0x3A: // smart phone APP set temperature value 
         
-        
+        run_t.wifi_link_net_success=1;
         run_t.wifi_set_temperature = pdata[5];
 
         decade_temp =  run_t.wifi_set_temperature / 10 ;

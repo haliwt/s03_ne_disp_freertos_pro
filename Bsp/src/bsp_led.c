@@ -20,26 +20,34 @@ void Breath_Led(void)
    
     k++;
 
-	if(k<40000){
+	if(k<80){
 
 	POWER_ON_LED() ;//LED_POWER_ON();
 
 
 
 	}
-    if(k>40000 && k <80000){
+    if(k>80 && k <120){
 
 	   POWER_OFF_LED() ; //LED_POWER_OFF();
 
 	}
-	if(k>80000 && k< 120000){
+	if(k>120 && k< 160){
 
-	  POWER_TOGGLE();
+	  //POWER_TOGGLE();
+	  POWER_ON_LED() ;//LED_POWER_ON();
+	  POWER_OFF_LED() ; //LED_POWER_OFF();
+	  POWER_ON_LED() ;//LED_POWER_ON();
+	  POWER_OFF_LED() ; //LED_POWER_OFF();
+	  POWER_ON_LED() ;//LED_POWER_ON();
+	  POWER_OFF_LED() ; //LED_POWER_OFF();
+      POWER_ON_LED() ;//LED_POWER_ON();
+      POWER_OFF_LED() ; //LED_POWER_OFF();
 
 
 	}
 
-	if(k>120000){
+	if(k>160){
 
         k=0;
 	}
