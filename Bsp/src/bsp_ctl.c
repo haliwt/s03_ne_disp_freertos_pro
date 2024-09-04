@@ -465,3 +465,21 @@ static void Works_Counter_Time(void)
 }
 
 
+#if 0
+void display_timer_or_timing_time_fun(uint8_t tim)
+{
+    
+  
+      TM1723_Write_Display_Data(0xC9,(0x01+lcdNumber4_Low[lcd_t.number4_low]+lcdNumber5_High[lcd_t.number5_high]) & 0xff);//display digital '4,5'
+              
+      TM1723_Write_Display_Data(0xCB,(0x01+lcdNumber6_Low[lcd_t.number6_low]+lcdNumber7_High[lcd_t.number7_high]) & 0xff);
+           
+                
+
+              
+      
+      
+  }
+
+#endif 
+

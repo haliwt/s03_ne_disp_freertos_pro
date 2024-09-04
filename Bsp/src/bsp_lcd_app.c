@@ -279,7 +279,38 @@ void disp_time_colon_ion_handler(void)
 {
    /*********************END T15***********************/
      //address"0xCB" ->numbers .T9":","6->6B,6G,6C","7->7A,7F,7E,7D"
-     if(lcd_t.gTimer_colon_ms < 6){
+    if(run_t.display_set_timer_timing==beijing_time){
+	 lcd_t.number5_low=(run_t.dispTime_hours ) /10;
+     lcd_t.number5_high =(run_t.dispTime_hours) /10;
+
+	 lcd_t.number6_low = (run_t.dispTime_hours ) %10;;
+	 lcd_t.number6_high = (run_t.dispTime_hours ) %10;
+     
+     lcd_t.number7_low = (run_t.dispTime_minutes )/10;
+	 lcd_t.number7_high = (run_t.dispTime_minutes )/10;
+
+	 lcd_t.number8_low = (run_t.dispTime_minutes )%10;
+	 lcd_t.number8_high = (run_t.dispTime_minutes )%10;
+
+
+    }
+    else{ //timer time
+
+		     lcd_t.number5_low=(run_t.timer_time_hours ) /10;
+			lcd_t.number5_high =(run_t.timer_time_hours) /10;
+
+			lcd_t.number6_low = (run_t.timer_time_hours ) %10;;
+			lcd_t.number6_high = (run_t.timer_time_hours ) %10;
+
+			lcd_t.number7_low = (run_t.timer_time_minutes )/10;
+			lcd_t.number7_high = (run_t.timer_time_minutes)/10;
+
+			lcd_t.number8_low = (run_t.timer_time_minutes)%10;
+			lcd_t.number8_high = (run_t.timer_time_minutes )%10;
+
+	}
+
+    if(lcd_t.gTimer_colon_ms < 6){
      	 if(run_t.setup_timer_timing_item== 0){
 		 	if(run_t.ptc_too_hot_flag ==0){
 	   			TM1723_Write_Display_Data(0xCB,0x01+lcdNumber6_Low[lcd_t.number6_low]+lcdNumber7_High[lcd_t.number7_high]);//display "6,7"
@@ -333,7 +364,42 @@ void disp_time_colon_ion_handler(void)
 static void disp_fan_speed_level(void)
 {
 
-      if(run_t.disp_wind_speed_grade >66){
+      
+	if(run_t.display_set_timer_timing==beijing_time){
+	 lcd_t.number5_low=(run_t.dispTime_hours ) /10;
+     lcd_t.number5_high =(run_t.dispTime_hours) /10;
+
+	 lcd_t.number6_low = (run_t.dispTime_hours ) %10;;
+	 lcd_t.number6_high = (run_t.dispTime_hours ) %10;
+     
+     lcd_t.number7_low = (run_t.dispTime_minutes )/10;
+	 lcd_t.number7_high = (run_t.dispTime_minutes )/10;
+
+	 lcd_t.number8_low = (run_t.dispTime_minutes )%10;
+	 lcd_t.number8_high = (run_t.dispTime_minutes )%10;
+
+
+    }
+    else{ //timer time
+
+		     lcd_t.number5_low=(run_t.timer_time_hours ) /10;
+			lcd_t.number5_high =(run_t.timer_time_hours) /10;
+
+			lcd_t.number6_low = (run_t.timer_time_hours ) %10;;
+			lcd_t.number6_high = (run_t.timer_time_hours ) %10;
+
+			lcd_t.number7_low = (run_t.timer_time_minutes )/10;
+			lcd_t.number7_high = (run_t.timer_time_minutes)/10;
+
+			lcd_t.number8_low = (run_t.timer_time_minutes)%10;
+			lcd_t.number8_high = (run_t.timer_time_minutes )%10;
+
+	}
+	  
+	  
+	  
+	  
+	  if(run_t.disp_wind_speed_grade >66){
 	 	TM1723_Write_Display_Data(0xCE,(T13+lcdNumber8_Low[lcd_t.number8_low]+ WIND_SPEED_FULL) & 0xff);
 	  }
 	  else if(run_t.disp_wind_speed_grade >33 && run_t.disp_wind_speed_grade <67){
@@ -384,7 +450,42 @@ void disp_fan_leaf_run_icon(void)
 {
 
   if(lcd_t.gTimer_fan_10ms >39 && lcd_t.gTimer_fan_10ms<80){
-			 if(run_t.setup_timer_timing_item == 0){
+      
+    if(run_t.display_set_timer_timing==beijing_time){
+      lcd_t.number5_low=(run_t.dispTime_hours ) /10;
+     lcd_t.number5_high =(run_t.dispTime_hours) /10;
+
+	 lcd_t.number6_low = (run_t.dispTime_hours ) %10;;
+	 lcd_t.number6_high = (run_t.dispTime_hours ) %10;
+     
+     lcd_t.number7_low = (run_t.dispTime_minutes )/10;
+	 lcd_t.number7_high = (run_t.dispTime_minutes )/10;
+
+	 lcd_t.number8_low = (run_t.dispTime_minutes )%10;
+	 lcd_t.number8_high = (run_t.dispTime_minutes )%10;
+
+
+    }
+    else{ //timer time
+
+           lcd_t.number5_low=(run_t.timer_time_hours ) /10;
+			lcd_t.number5_high =(run_t.timer_time_hours) /10;
+
+			lcd_t.number6_low = (run_t.timer_time_hours ) %10;;
+			lcd_t.number6_high = (run_t.timer_time_hours ) %10;
+
+			lcd_t.number7_low = (run_t.timer_time_minutes )/10;
+			lcd_t.number7_high = (run_t.timer_time_minutes)/10;
+
+			lcd_t.number8_low = (run_t.timer_time_minutes)%10;
+			lcd_t.number8_high = (run_t.timer_time_minutes )%10;
+
+
+    }
+
+
+
+            if(run_t.setup_timer_timing_item == 0){
 
                 
 			 	if(run_t.ptc_too_hot_flag ==0){

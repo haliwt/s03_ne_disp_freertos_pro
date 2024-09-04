@@ -169,7 +169,13 @@ static void disp_set_timer_timing_value_fun(void)
               run_t.gTimer_timing=0;
                if(run_t.timer_time_hours !=0){  
                       run_t.timer_timing_define_flag = timing_success;
-                     
+                      run_t.display_set_timer_timing = timer_time;
+                }
+                else{
+
+                     run_t.display_set_timer_timing = beijing_time;
+
+                  
                 }
          
     
