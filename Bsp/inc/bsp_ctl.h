@@ -83,7 +83,7 @@ typedef struct __RUN{
   
    uint8_t  disp_wind_speed_grade;
    uint8_t  gTimer_fan_counter;
-   uint8_t  ptc_too_hot_flag;
+ 
 
    uint8_t single_data;
    uint8_t fan_off_60s;

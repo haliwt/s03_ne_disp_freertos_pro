@@ -312,7 +312,7 @@ void disp_time_colon_ion_handler(void)
 
     if(lcd_t.gTimer_colon_ms < 6){
      	 if(run_t.setup_timer_timing_item== 0){
-		 	if(run_t.ptc_too_hot_flag ==0){
+		 	if(run_t.ptc_warning ==0){
 	   			TM1723_Write_Display_Data(0xCB,0x01+lcdNumber6_Low[lcd_t.number6_low]+lcdNumber7_High[lcd_t.number7_high]);//display "6,7"
 			}
             else{
@@ -335,7 +335,7 @@ void disp_time_colon_ion_handler(void)
      }
      else if(lcd_t.gTimer_colon_ms > 5 && lcd_t.gTimer_colon_ms < 11){
      	 if(run_t.setup_timer_timing_item == 0){
-		 	if(run_t.ptc_too_hot_flag ==0){
+		 	if(run_t.ptc_warning ==0){
 	 			TM1723_Write_Display_Data(0xCB,lcdNumber6_Low[lcd_t.number6_low]+lcdNumber7_High[lcd_t.number7_high]);//display "6,7"
 		 	}
 			else{
@@ -347,7 +347,7 @@ void disp_time_colon_ion_handler(void)
 				     TM1723_Write_Display_Data(0xCB,lcdNumber6_Low_r[0]+lcdNumber7_High[10]);//
 
 				}
-			    else if(  run_t.gTimer_ptc_fan_blink_warning > 10){
+			    else if(run_t.gTimer_ptc_fan_blink_warning > 10){
 
 					 run_t.gTimer_ptc_fan_blink_warning=0;
 				}
@@ -488,7 +488,7 @@ void disp_fan_leaf_run_icon(void)
             if(run_t.setup_timer_timing_item == 0){
 
                 
-			 	if(run_t.ptc_too_hot_flag ==0){
+			 	if(run_t.ptc_warning ==0){
                         TM1723_Write_Display_Data(0xCA,T15+lcdNumber5_Low[lcd_t.number5_low]+lcdNumber6_High[lcd_t.number6_high]);//display digital '5,6'
 		      			TM1723_Write_Display_Data(0xCC,lcdNumber7_Low[lcd_t.number7_low]+lcdNumber8_High[lcd_t.number8_high]);//display "7,8'
 		      			disp_fan_speed_level();
@@ -535,7 +535,7 @@ void disp_fan_leaf_run_icon(void)
 		 else if(lcd_t.gTimer_fan_10ms <40){
 		 	 if(run_t.setup_timer_timing_item == 0){
                 
-			 	if(run_t.ptc_too_hot_flag ==0){
+			 	if(run_t.ptc_warning ==0){
                     TM1723_Write_Display_Data(0xCA,lcdNumber5_Low[lcd_t.number5_low]+lcdNumber6_High[lcd_t.number6_high]);//display digit
 	  				TM1723_Write_Display_Data(0xCC,T14+lcdNumber7_Low[lcd_t.number7_low]+lcdNumber8_High[lcd_t.number8_high]);//display "t,c
                     donot_disp_T13_icon_fan_speed_level();

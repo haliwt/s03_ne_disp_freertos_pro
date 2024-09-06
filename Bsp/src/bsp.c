@@ -65,7 +65,7 @@ void display_timer_and_beijing_time_handler(void)
 static void disp_normal_timing_handler(void)
 {
 
-        if( run_t.ptc_too_hot_flag ==0){
+        if( run_t.ptc_warning ==0){
      	    TM1723_Write_Display_Data(0xC9,(0x01+lcdNumber4_Low[lcd_t.number4_low]+lcdNumber5_High[lcd_t.number5_high]) & 0xff);//display digital '4,5'
 	 	 }
 		else{

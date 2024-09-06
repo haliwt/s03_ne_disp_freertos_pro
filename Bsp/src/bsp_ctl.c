@@ -147,6 +147,43 @@ void receive_data_fromm_mainboard(uint8_t *pdata)
         }
       break;
 
+      case 0x08: //temperature of high warning.
+
+        if(pdata[3] == 0x01){  //warning 
+
+            run_t.ptc_warning = 1;
+            
+
+        }
+        else if(pdata[3] == 0x0){ //close 
+
+           run_t.ptc_warning = 0;
+         
+
+        }
+            
+
+
+      break;
+
+      case 0x09: //fan of default of warning.
+
+         if(pdata[3] == 0x01){  //warning 
+
+            run_t.fan_warning = 1;
+            
+
+        }
+        else if(pdata[3] == 0x0){ //close 
+
+           run_t.fan_warning = 0;
+         
+
+        }
+
+
+      break;
+
       case 0x1B: //湿度数据
 
         if(pdata[2] == 0x0F){ //数据

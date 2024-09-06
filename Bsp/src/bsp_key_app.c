@@ -65,7 +65,7 @@ void power_off_handler(void)
         run_t.timer_time_minutes =0;
 
 
-        run_t.ptc_too_hot_flag = 0;
+    
         run_t.fan_warning=0;
         run_t.ptc_warning = 0;
 
@@ -196,7 +196,7 @@ void mode_key_short_fun(void)
 			   run_t.gModel=2;
                if(wifi_link_net_state() == 1){
                   SendData_Set_Command(0x27,0x02); //MODE_NOT AI,BUR NO_BUZZER);
-
+                  osDelay(5);
                }
 		 
 		
@@ -209,7 +209,7 @@ void mode_key_short_fun(void)
 	           run_t.gModel=1;
                if(wifi_link_net_state() ==1){
 			        SendData_Set_Command(0x27,0x01); //MODE_AI,BUR NO_BUZZER);
-
+                    osDelay(5);
                 }
 			
 				

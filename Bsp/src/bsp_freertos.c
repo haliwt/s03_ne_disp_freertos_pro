@@ -274,8 +274,7 @@ static void vTaskRunPro(void *pvParameters)
             else if( key_mode_flag == 1 &&  gl_tMsg.key_long_mode_flag !=1){
                  key_mode_flag ++;
                  gl_tMsg.long_key_mode_counter=0;
-                 SendData_Buzzer();
-                 osDelay(5);
+                
                  mode_key_short_fun();
              }
              else if(gl_tMsg.key_long_mode_flag ==1 ){
@@ -318,6 +317,12 @@ static void vTaskRunPro(void *pvParameters)
                 if(gl_tMsg.key_long_mode_flag==2)gl_tMsg.key_long_mode_flag++;
 
             }
+            if(key_mode_flag==2){
+                key_mode_flag++;
+                SendData_Buzzer();
+                osDelay(5);
+            }
+            
        set_temperature_compare_value_fun();
             
        disp_temp_humidity_wifi_icon_handler();
