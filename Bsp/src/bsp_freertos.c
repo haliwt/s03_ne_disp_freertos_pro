@@ -164,15 +164,8 @@ static void vTaskRunPro(void *pvParameters)
            
                 receive_data_fromm_mainboard(gl_tMsg.usData);
                 }
-
-
-
             }
-
-
-            
-             
-			if((ulValue & POWER_KEY_BIT_0) != 0)
+            if((ulValue & POWER_KEY_BIT_0) != 0)
 			{
 
                 if(dc_power_on == 0){

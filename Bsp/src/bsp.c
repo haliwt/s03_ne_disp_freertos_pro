@@ -7,6 +7,7 @@ static void  disp_set_timer_timing_value_fun(void);
 
 static void disp_normal_timing_handler(void);
 
+static void fan_default_warning_fun(void);
 
 
 
@@ -36,17 +37,31 @@ void mode_key_long_fun(void)
 
 void display_timer_and_beijing_time_handler(void)
 {
-
+   
+  // DISP_STATE  disp_state;
    switch(run_t.setup_timer_timing_item){
 
-    case 0:
+    case WORKS_TIME:
       disp_normal_timing_handler();
 
     break;
 
-    case 1:
+    case SET_TIMER_TIMING:
 
       disp_set_timer_timing_value_fun();
+
+    break;
+
+    case FAN_WARNING: //fan warning 
+
+      
+         fan_default_warning_fun();
+
+    break;
+
+    case PTC_WARNING: //ptc warning
+
+    
 
     break;
 
@@ -65,7 +80,7 @@ void display_timer_and_beijing_time_handler(void)
 static void disp_normal_timing_handler(void)
 {
 
-        if( run_t.ptc_warning ==0){
+        if(run_t.ptc_warning ==0){
      	    TM1723_Write_Display_Data(0xC9,(0x01+lcdNumber4_Low[lcd_t.number4_low]+lcdNumber5_High[lcd_t.number5_high]) & 0xff);//display digital '4,5'
 	 	 }
 		else{
@@ -245,7 +260,24 @@ void set_temperature_compare_value_fun(void)
     }
 
 }
+/**************************************************************************************************
+*
+*Function Name:void set_temperature_compare_value_fun(void)
+*Function : fan of warning ,fan of leaf stop
+*
+*
+*****************************************************************************************************/
+static void fan_default_warning_fun(void)
+{
 
+   TM1723_Write_Display_Data(0xC9,(0x01+lcdNumber4_Low[lcd_t.number4_low]+lcdNumber5_High_E[0]));//display digital 'E'
+   TM1723_Write_Display_Data(0xCA,T15+lcdNumber5_Low_E[0]+lcdNumber6_High_r[0]);//display digital 'r'             
+   TM1723_Write_Display_Data(0xCB,0x01+lcdNumber6_Low_r[0]+lcdNumber7_High[0]);//display "6,7"
+   TM1723_Write_Display_Data(0xCC,T14+lcdNumber7_Low[0]+lcdNumber8_High[2]);//display "02'
+   TM1723_Write_Display_Data(0xCE,T13+lcdNumber8_Low[2]);//display "t,c"
+   TM1723_Write_Display_Data(0xCF,(T10+T11+T12+T16));//
+
+}
 
 
 

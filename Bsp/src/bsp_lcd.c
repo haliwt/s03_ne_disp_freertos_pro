@@ -26,8 +26,8 @@
 
 
 
-static void Display_Kill_Dry_Ster_Icon(void);
-static void LCD_DisplayNumber_OneTwo_Icon_Handler(void);
+
+
 
 
 const uint8_t lcdNumber1_Low[]  ={0x0A,0x0A,0x06,0x0E,0x0E,0x0C,0x0C,0x0A,0x0E,0x0E};

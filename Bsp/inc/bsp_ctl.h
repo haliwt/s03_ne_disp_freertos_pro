@@ -3,7 +3,14 @@
 #include "main.h"
 
 
+typedef enum{
 
+   WORKS_TIME,
+   SET_TIMER_TIMING,
+   FAN_WARNING,
+   PTC_WARNING
+
+}DISP_STATE;
 
 
 typedef enum WIFI_STATE_T{

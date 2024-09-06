@@ -423,16 +423,12 @@ void dec_key_fun(void)
 
 } 
 
-
-
-
-
-
 /*********************************************************************************
  * 
  * Function Name:static void Beijing_Time_Dispaly(void)
- * 
- * 
+ * Function :
+ * Input Ref:
+ * Return Ref:
  * 
 **********************************************************************************/
 static void Beijing_Time_Display(void)

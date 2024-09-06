@@ -152,6 +152,8 @@ void receive_data_fromm_mainboard(uint8_t *pdata)
         if(pdata[3] == 0x01){  //warning 
 
             run_t.ptc_warning = 1;
+            run_t.setup_timer_timing_item =  PTC_WARNING; //ptc warning 
+            run_t.display_set_timer_timing = 0xff;
             
 
         }
@@ -171,7 +173,8 @@ void receive_data_fromm_mainboard(uint8_t *pdata)
          if(pdata[3] == 0x01){  //warning 
 
             run_t.fan_warning = 1;
-            
+            run_t.setup_timer_timing_item = FAN_WARNING ; //fan warning 
+            run_t.display_set_timer_timing = 0xff;
 
         }
         else if(pdata[3] == 0x0){ //close 
@@ -343,7 +346,9 @@ void Timing_Handler(void)
 		Setup_Timer_Times();
 		Works_Counter_Time();
 	
-     
+     break;
+
+     default:
      break;
 		
     }
@@ -427,6 +432,8 @@ void Setup_Timer_Times(void)
 *************************************************************************/       
 void Setup_Timer_Times_Donot_Display(void)
 {
+
+   if(run_t.timer_timing_define_flag == timing_success){
    if(run_t.gTimer_timing > 59){ //
         
         run_t.gTimer_timing =0;
@@ -464,7 +471,7 @@ void Setup_Timer_Times_Donot_Display(void)
             
 		     }
 
-
+    }
 
 
 }

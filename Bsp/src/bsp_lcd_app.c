@@ -6,6 +6,7 @@ static void disp_fan_speed_level(void);
 
 static void donot_disp_T13_icon_fan_speed_level(void);
 
+static void disp_fan_ptc_warning_time_colon_fun(void);
 
 
 /*************************************************************************
@@ -214,8 +215,8 @@ void disp_temp_humidity_wifi_icon_handler(void)
 	*
 	*Function Name:static void Display_Kill_Dry_Ster_Icon(void)
 	*Function: display of icon , "1" -> ON ,"0"-> OFF
-	*
-	*
+	*Input Ref:
+	*Return Ref:
 	*
 ******************************************************************************/
 static void Display_Kill_Dry_Ster_Icon(void)
@@ -274,10 +275,20 @@ static void Display_Kill_Dry_Ster_Icon(void)
 }
 
 
-
+/******************************************************************************
+	*
+	*Function Name:void disp_time_colon_ion_handler(void)
+	*Function: 
+	*Input Ref:
+	*Return Ref:
+	*
+******************************************************************************/
 void disp_time_colon_ion_handler(void)
 {
-   /*********************END T15***********************/
+
+    if(run_t.setup_timer_timing_item != FAN_WARNING || run_t.setup_timer_timing_item != PTC_WARNING){
+
+    /*********************END T15***********************/
      //address"0xCB" ->numbers .T9":","6->6B,6G,6C","7->7A,7F,7E,7D"
     if(run_t.display_set_timer_timing==beijing_time){
 	 lcd_t.number5_low=(run_t.dispTime_hours ) /10;
@@ -294,7 +305,7 @@ void disp_time_colon_ion_handler(void)
 
 
     }
-    else{ //timer time
+    else if(run_t.display_set_timer_timing==timer_time){ //timer time
 
 		     lcd_t.number5_low=(run_t.timer_time_hours ) /10;
 			lcd_t.number5_high =(run_t.timer_time_hours) /10;
@@ -358,9 +369,72 @@ void disp_time_colon_ion_handler(void)
 	 else  lcd_t.gTimer_colon_ms = 0;
 
 
+    }
+    else if(run_t.setup_timer_timing_item == FAN_WARNING || run_t.setup_timer_timing_item == PTC_WARNING){
+
+       disp_fan_ptc_warning_time_colon_fun();
+
+
+    }
+
 }
+/******************************************************************************
+	*
+	*Function Name:static void disp_fan_warning_time_colon_fun(void)
+	*Function: 
+	*Input Ref:
+	*Return Ref:
+	*
+******************************************************************************/
+static void disp_fan_ptc_warning_time_colon_fun(void)
+{
+     if(lcd_t.gTimer_colon_ms < 6){
+     	
+		 	
+			     if(run_t.gTimer_ptc_fan_blink_warning < 6){ //500ms
+				   TM1723_Write_Display_Data(0xCB,0x01+lcdNumber6_Low_r[0]+lcdNumber7_High[0]);//display "r : 0"
+			     }
+				 else if(run_t.gTimer_ptc_fan_blink_warning> 5 &&  run_t.gTimer_ptc_fan_blink_warning< 11){
+							
+				      TM1723_Write_Display_Data(0xCB,0x01+lcdNumber6_Low_r[0]+lcdNumber7_High[10]);//display "r: "
+
+				  }
+				   else if(  run_t.gTimer_ptc_fan_blink_warning > 10){
+
+					   run_t.gTimer_ptc_fan_blink_warning=0;
+
+				  }
+				 
+	 }
+	 else if(lcd_t.gTimer_colon_ms > 5 && lcd_t.gTimer_colon_ms < 11){
+     	 
+				if(run_t.gTimer_ptc_fan_blink_warning < 6){ //500ms
+                		TM1723_Write_Display_Data(0xCB,lcdNumber6_Low_r[0]+lcdNumber7_High[0]);//
+				}
+				else if(run_t.gTimer_ptc_fan_blink_warning> 5 &&  run_t.gTimer_ptc_fan_blink_warning< 11){
+							
+				     TM1723_Write_Display_Data(0xCB,lcdNumber6_Low_r[0]+lcdNumber7_High[10]);//
+
+				}
+			    else if(run_t.gTimer_ptc_fan_blink_warning > 10){
+
+					 run_t.gTimer_ptc_fan_blink_warning=0;
+				}
+				
+        }
+		else  lcd_t.gTimer_colon_ms = 0;
 
 
+
+}
+/******************************************************************************
+	*
+	*Function Name:static void Display_Kill_Dry_Ster_Icon(void)
+	*Function: display of icon , "1" -> ON ,"0"-> OFF
+	*Input Ref:
+	*Return Ref:
+	*
+******************************************************************************/
 static void disp_fan_speed_level(void)
 {
 
