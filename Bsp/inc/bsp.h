@@ -50,6 +50,7 @@ typedef struct _process_state{
    //
    uint8_t gTimer_set_temp_times;
    uint8_t gTimer_temp_copare_value;
+   uint8_t gTimer_fan_to_ptc_warning;
    
 
 
@@ -65,10 +66,10 @@ void mode_key_long_fun(void);
 
 void set_temperature_compare_value_fun(void);
 
-
-
-
 void display_timer_and_beijing_time_handler(void);
+
+
+
 
 
 #endif

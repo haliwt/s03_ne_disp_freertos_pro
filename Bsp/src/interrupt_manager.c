@@ -40,6 +40,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		 gpro_t.gTimer_mode_key_long++;
          gpro_t.gTimer_set_temp_times++;
          gpro_t.gTimer_temp_copare_value++ ;
+         gpro_t.gTimer_fan_to_ptc_warning++ ;
          //
 		run_t.fan_off_60s++;
         run_t.gTimer_wifi_connect_counter++;

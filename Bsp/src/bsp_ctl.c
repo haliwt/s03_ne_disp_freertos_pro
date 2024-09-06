@@ -108,6 +108,53 @@ void receive_data_fromm_mainboard(uint8_t *pdata)
      break;
 
 
+     
+
+      case 0x08: //temperature of high warning.
+
+        if(pdata[3] == 0x01){  //warning 
+
+            run_t.ptc_warning = 1;
+            run_t.setup_timer_timing_item =  PTC_WARNING; //ptc warning 
+            run_t.display_set_timer_timing = 0xff;
+            run_t.gDry =0;
+            SendData_Set_Command(0x22,0x0); //close ptc ,but don't buzzer sound .
+
+        }
+        else if(pdata[3] == 0x0){ //close 
+
+           run_t.ptc_warning = 0;
+         
+
+        }
+            
+
+
+      break;
+
+      case 0x09: //fan of default of warning.
+
+         if(pdata[3] == 0x01){  //warning 
+
+            run_t.fan_warning = 1;
+            run_t.setup_timer_timing_item = FAN_WARNING ; //fan warning 
+            run_t.display_set_timer_timing = 0xff;
+            run_t.gDry =0;
+            SendData_Set_Command(0x22,0x0); //close ptc ,but don't buzzer sound .
+
+        }
+        else if(pdata[3] == 0x0){ //close 
+
+           run_t.fan_warning = 0;
+         
+
+        }
+
+
+      break;
+
+      //接收的是数据
+
       case 0x1A: //温度数据
 
         if(pdata[4] == 0x02){ //数据
@@ -145,48 +192,6 @@ void receive_data_fromm_mainboard(uint8_t *pdata)
              
             
         }
-      break;
-
-      case 0x08: //temperature of high warning.
-
-        if(pdata[3] == 0x01){  //warning 
-
-            run_t.ptc_warning = 1;
-            run_t.setup_timer_timing_item =  PTC_WARNING; //ptc warning 
-            run_t.display_set_timer_timing = 0xff;
-            
-            
-
-        }
-        else if(pdata[3] == 0x0){ //close 
-
-           run_t.ptc_warning = 0;
-         
-
-        }
-            
-
-
-      break;
-
-      case 0x09: //fan of default of warning.
-
-         if(pdata[3] == 0x01){  //warning 
-
-            run_t.fan_warning = 1;
-            run_t.setup_timer_timing_item = FAN_WARNING ; //fan warning 
-            run_t.display_set_timer_timing = 0xff;
-            run_t.gDry =0;
-
-        }
-        else if(pdata[3] == 0x0){ //close 
-
-           run_t.fan_warning = 0;
-         
-
-        }
-
-
       break;
 
       case 0x1B: //湿度数据
