@@ -155,6 +155,7 @@ void receive_data_fromm_mainboard(uint8_t *pdata)
             run_t.setup_timer_timing_item =  PTC_WARNING; //ptc warning 
             run_t.display_set_timer_timing = 0xff;
             
+            
 
         }
         else if(pdata[3] == 0x0){ //close 
@@ -175,6 +176,7 @@ void receive_data_fromm_mainboard(uint8_t *pdata)
             run_t.fan_warning = 1;
             run_t.setup_timer_timing_item = FAN_WARNING ; //fan warning 
             run_t.display_set_timer_timing = 0xff;
+            run_t.gDry =0;
 
         }
         else if(pdata[3] == 0x0){ //close 

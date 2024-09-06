@@ -271,8 +271,17 @@ static void fan_default_warning_fun(void)
 {
 
    TM1723_Write_Display_Data(0xC9,(0x01+lcdNumber4_Low[lcd_t.number4_low]+lcdNumber5_High_E[0]));//display digital 'E'
-   TM1723_Write_Display_Data(0xCA,T15+lcdNumber5_Low_E[0]+lcdNumber6_High_r[0]);//display digital 'r'             
-   TM1723_Write_Display_Data(0xCB,0x01+lcdNumber6_Low_r[0]+lcdNumber7_High[0]);//display "6,7"
+   TM1723_Write_Display_Data(0xCA,T15+lcdNumber5_Low_E[0]+lcdNumber6_High_r[0]);//display digital 'r'  
+    if(lcd_t.gTimer_colon_ms < 6){           
+         TM1723_Write_Display_Data(0xCB,0x01+lcdNumber6_Low_r[0]+lcdNumber7_High[0]);//display "6,7"
+    }
+   else if(lcd_t.gTimer_colon_ms > 5 && lcd_t.gTimer_colon_ms < 11){
+      TM1723_Write_Display_Data(0xCB,lcdNumber6_Low_r[0]+lcdNumber7_High[0]);//
+   }
+   else 
+   {
+      lcd_t.gTimer_colon_ms = 0;
+   }
    TM1723_Write_Display_Data(0xCC,T14+lcdNumber7_Low[0]+lcdNumber8_High[2]);//display "02'
    TM1723_Write_Display_Data(0xCE,T13+lcdNumber8_Low[2]);//display "t,c"
    TM1723_Write_Display_Data(0xCF,(T10+T11+T12+T16));//

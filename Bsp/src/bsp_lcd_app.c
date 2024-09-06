@@ -370,12 +370,7 @@ void disp_time_colon_ion_handler(void)
 
 
     }
-    else if(run_t.setup_timer_timing_item == FAN_WARNING || run_t.setup_timer_timing_item == PTC_WARNING){
-
-       disp_fan_ptc_warning_time_colon_fun();
-
-
-    }
+   
 
 }
 /******************************************************************************
@@ -391,26 +386,29 @@ static void disp_fan_ptc_warning_time_colon_fun(void)
      if(lcd_t.gTimer_colon_ms < 6){
      	
 		 	
-			     if(run_t.gTimer_ptc_fan_blink_warning < 6){ //500ms
-				   TM1723_Write_Display_Data(0xCB,0x01+lcdNumber6_Low_r[0]+lcdNumber7_High[0]);//display "r : 0"
-			     }
-				 else if(run_t.gTimer_ptc_fan_blink_warning> 5 &&  run_t.gTimer_ptc_fan_blink_warning< 11){
-							
-				      TM1723_Write_Display_Data(0xCB,0x01+lcdNumber6_Low_r[0]+lcdNumber7_High[10]);//display "r: "
+	    // if(run_t.gTimer_ptc_fan_blink_warning < 6){ //500ms
+		   TM1723_Write_Display_Data(0xCB,0x01+lcdNumber6_Low_r[0]+lcdNumber7_High[0]);//display "r : 0"
+	    /// }
+	    #if 0
+		 else if(run_t.gTimer_ptc_fan_blink_warning> 5 &&  run_t.gTimer_ptc_fan_blink_warning< 11){
+					
+		      TM1723_Write_Display_Data(0xCB,0x01+lcdNumber6_Low_r[0]+lcdNumber7_High[10]);//display "r: "
 
-				  }
-				   else if(  run_t.gTimer_ptc_fan_blink_warning > 10){
+		  }
+		   else if(  run_t.gTimer_ptc_fan_blink_warning > 10){
 
-					   run_t.gTimer_ptc_fan_blink_warning=0;
+			   run_t.gTimer_ptc_fan_blink_warning=0;
 
-				  }
+		  }
+          #endif 
 				 
 	 }
 	 else if(lcd_t.gTimer_colon_ms > 5 && lcd_t.gTimer_colon_ms < 11){
      	 
-				if(run_t.gTimer_ptc_fan_blink_warning < 6){ //500ms
+				//if(run_t.gTimer_ptc_fan_blink_warning < 6){ //500ms
                 		TM1723_Write_Display_Data(0xCB,lcdNumber6_Low_r[0]+lcdNumber7_High[0]);//
-				}
+				//}
+				#if 0
 				else if(run_t.gTimer_ptc_fan_blink_warning> 5 &&  run_t.gTimer_ptc_fan_blink_warning< 11){
 							
 				     TM1723_Write_Display_Data(0xCB,lcdNumber6_Low_r[0]+lcdNumber7_High[10]);//
@@ -420,6 +418,7 @@ static void disp_fan_ptc_warning_time_colon_fun(void)
 
 					 run_t.gTimer_ptc_fan_blink_warning=0;
 				}
+                #endif 
 				
         }
 		else  lcd_t.gTimer_colon_ms = 0;
